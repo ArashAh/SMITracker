@@ -1,0 +1,25 @@
+Package: SMITracker
+Title: Single-molecule Interaction Tracker
+Version: 0.0.0.9000
+Authors@R: person('Arash', 'Ahmadi', email = 'arash.ahmadi@dscience.uio.no', role = c('cre', 'aut'))
+Description: This package is an interactive analysis platform that enables the users to detect and track
+  fluorescently-labeled single molecules scanning a linear substrates. In a typical experiment to collect a few
+  number of short-lived interactions, large number of frames are recorded. Finding the spatio-temporal address of
+  those events of target is the challenge that this package helps solving. Prior to analysis using this platform,
+  all the existing signals in the recorded images need to be localized in 'FIJI' using a single molecule localization
+  plug-in called 'ThunderSTORM'.
+License: MIT + file LICENSE
+Imports: 
+    config (>= 0.3.2),
+    golem (>= 0.4.1),
+    shiny (>= 1.8.0)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+URL: https://github.uio.no/dScience/SMITracker.git
+BugReports: https://github.uio.no/dScience/SMITracker.git/issues
+Suggests: 
+    spelling,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Language: en-US
