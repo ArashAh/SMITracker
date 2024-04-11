@@ -64,6 +64,16 @@ app_server <- function(input, output, session) {
   folder.path2 <- reactive({req(input$folder2)
     as.character(parseDirPath(roots, input$folder2))})
 
+
+    output$folder.path.output <-
+      output$folder.path.output2 <-
+      output$folder.path.output3 <-
+      output$folder.path.output4 <-
+      output$folder.path.output5 <-renderText({
+      folder.path2()
+
+    }
+    )
   observeEvent(input$save,{
 
 
@@ -168,6 +178,11 @@ app_server <- function(input, output, session) {
 
 
     print(nrow(rv$collect.out.data))
+  })
+
+  observeEvent(input$next.data.set, {
+    # Update the numericInput value to +1
+    updateNumericInput(session, "num", value = input$num + 1)
   })
 
   observeEvent(input$reset, {
@@ -846,7 +861,7 @@ app_server <- function(input, output, session) {
     observeEvent( input$save60.2,{
 
       write.csv(ggplot_build(plot60.1())$plot$data,
-                paste(folder.path2(),"/","plot.data1.1.csv"))
+                paste0(folder.path2(),"/","plot.1.1.data.csv"))
 
     })
 
@@ -873,7 +888,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$save60.2,{
 
       write.csv(ggplot_build(plot60.2())$plot$data,
-                paste(folder.path2(),"/","plot.data1.2.csv"))
+                paste0(folder.path2(),"/","plot.1.2.data.csv"))
 
     })
 
@@ -899,7 +914,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$save60.3,{
 
       write.csv(ggplot_build(plot60.3())$plot$data,
-                paste(folder.path2(),"/","plot.data1.3.csv"))
+                paste0(folder.path2(),"/","plot.1.3.data.csv"))
 
     })
 
@@ -934,7 +949,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$save61.1,{
 
       write.csv(ggplot_build(plot61.1())$plot$data,
-                paste(folder.path2(),"/","plot.data2.1.csv"))
+                paste0(folder.path2(),"/","plot.2.1.data.csv"))
 
     })
 
@@ -965,7 +980,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$save61.2,{
 
       write.csv(ggplot_build(plot61.2())$plot$data,
-                paste(folder.path2(),"/","plot.data2.2.csv"))
+                paste0(folder.path2(),"/","plot.2.2.data.csv"))
 
     })
 
@@ -999,7 +1014,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$save62.1,{
 
       write.csv(ggplot_build(plot62.1())$plot$data,
-                paste(folder.path2(),"/","plot.data3.1.csv"))
+                paste0(folder.path2(),"/","plot.3.1.data.csv"))
 
     })
 
@@ -1026,7 +1041,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$save62.2,{
 
       write.csv(ggplot_build(plot62.2())$plot$data,
-                paste(folder.path2(),"/","plot.data3.2.csv"))
+                paste0(folder.path2(),"/","plot.3.2.data.csv"))
 
     })
 
@@ -1061,7 +1076,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$save63.1,{
 
       write.csv(ggplot_build(plot63.1())$plot$data,
-                paste(folder.path2(),"/","plot.data4.1.csv"))
+                paste0(folder.path2(),"/","plot.4.1.data.csv"))
 
     })
 
@@ -1090,7 +1105,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$save63.2,{
 
       write.csv(ggplot_build(plot63.2())$plot$data,
-                paste(folder.path2(),"/","plot.data4.2.csv"))
+                paste0(folder.path2(),"/","plot.4.2.data.csv"))
 
     })
   })
@@ -1135,7 +1150,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$save64.1,{
 
       write.csv(ggplot_build(plot64.1())$plot$data,
-                paste(folder.path2(),"/","plot.data5.1.csv"))
+                paste0(folder.path2(),"/","plot.5.1.data.csv"))
 
     })
 
@@ -1169,7 +1184,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$save64.2,{
 
       write.csv(ggplot_build(plot64.2())$plot$data,
-                paste(folder.path2(),"/","plot.data5.2.csv"))
+                paste0(folder.path2(),"/","plot.5.2.data.csv"))
 
     })
 
@@ -1203,7 +1218,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$save64.3,{
 
       write.csv(ggplot_build(plot64.3())$plot$data,
-                paste(folder.path2(),"/","plot.data5.3.csv"))
+                paste0(folder.path2(),"/","plot.5.3.data.csv"))
 
     })
 
@@ -1244,7 +1259,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$save65.1,{
 
       write.csv(ggplot_build(plot65.1())$plot$data,
-                paste(folder.path2(),"/","plot.data6.1.csv"))
+                paste0(folder.path2(),"/","plot.6.1.data.csv"))
 
     })
 
@@ -1286,7 +1301,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$save65.2,{
 
       write.csv(ggplot_build(plot65.2())$plot$data,
-                paste(folder.path2(),"/","plot.data6.2.csv"))
+                paste0(folder.path2(),"/","plot.6.2.data.csv"))
 
     })
 
@@ -1324,7 +1339,7 @@ app_server <- function(input, output, session) {
     observeEvent(input$save65.3,{
 
       write.csv(ggplot_build(plot65.3())$plot$data,
-                paste(folder.path2(),"/","plot.data6.3.csv"))
+                paste0(folder.path2(),"/","plot.6.3.data.csv"))
 
     })
 
