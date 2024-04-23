@@ -1,12 +1,3 @@
-# Building a Prod-Ready, Robust Shiny Application.
-#
-# README: each step of the dev files is optional, and you don't have to
-# fill every dev scripts before getting started.
-# 01_start.R should be filled at start.
-# 02_dev.R should be used to keep track of your development during the project.
-# 03_deploy.R should be used once you need to deploy your app.
-#
-#
 ###################################
 #### CURRENT FILE: DEV SCRIPT #####
 ###################################
@@ -18,6 +9,36 @@
 ## install.packages('attachment') # if needed.
 attachment::att_amend_desc()
 
+## Adding packages
+
+pkg_list <- c("DT",
+              "Rcpp",
+              "RcppRoll",
+              "broom",
+              "caret",
+              "config",
+              "data.table",
+              "dplyr",
+              "ggplot2",
+              "golem",
+              "jsonlite",
+              "magrittr",
+              "scales",
+              "shiny",
+              "shinyFiles",
+              "shinyWidgets",
+              "shinyscreenshot",
+              "shinythemes",
+              "stringr",
+              "tidyr",
+              "viridis",
+              "zoo")
+for (i in pkg_list) {
+
+usethis::use_package(i, min_version = T)
+
+}
+
 ## Add modules ----
 ## Create a module infrastructure in R/
 golem::add_module(name = "name_of_module1", with_test = TRUE) # Name of the module
@@ -27,6 +48,7 @@ golem::add_module(name = "name_of_module2", with_test = TRUE) # Name of the modu
 ## Creates fct_* and utils_*
 golem::add_fct("helpers", with_test = TRUE)
 golem::add_utils("helpers", with_test = TRUE)
+
 
 ## External resources
 ## Creates .js and .css files at inst/app/www
