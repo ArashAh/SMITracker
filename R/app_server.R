@@ -7,24 +7,25 @@
 
 
 app_server <- function(input, output, session) {
-  options(shiny.maxRequestSize=300*1024^2)
+  options(shiny.maxRequestSize = 300*1024^2)
 
-  sourceCpp('R/MSDFunction.cpp')
+  #sourceCpp('R/MSDFunction.cpp')
 
   rv <- reactiveValues()
 
 
+##### tab1 #####
 
-  ##### tab1 #####
-
-  roots = c(wd='../')
-  shinyDirChoose(input,'folder', roots=roots, filetypes=c('','json'))
+  roots = c(wd = '../')
+  shinyDirChoose(input, 'folder', roots = roots, filetypes = c('','json'))
 
   folder.path <- reactive({req(input$folder)
     as.character(parseDirPath(roots, input$folder))})
 
 
-  output$folderpath <-renderText(list.files(path = folder.path())[1])
+  output$folderpath <- renderText(list.files(path = folder.path())[1])
+  #
+  #output$folderpath <- renderText(getwd())
 
   observeEvent(input$load, {
 
