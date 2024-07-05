@@ -17,7 +17,7 @@ URL: https://github.uio.no/dScience/SMITracker.git
 BugReports: https://github.uio.no/dScience/SMITracker.git/issues
 Imports: 
     DT (>= 0.31),
-    Rcpp (>= 1.0.12),
+    Rcpp,
     RcppRoll (>= 0.3.0),
     broom (>= 1.0.5),
     caret (>= 6.0.94),
@@ -41,6 +41,8 @@ Imports:
 Suggests: 
     spelling,
     testthat (>= 3.0.0)
+LinkingTo: 
+    Rcpp
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
