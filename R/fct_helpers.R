@@ -9,21 +9,18 @@
 #' shinyFiles, shinyscreenshot, stringr, scales, zoo, jsonlite, caret,
 #' shinythemes, ggplot2, Rcpp, RcppRoll.
 #'
-#' @import magrittr
+#' @importFrom magrittr %<>% set_colnames
 #' @import dplyr
 #' @import tidyr
-#' @import viridis
 #' @import broom
-#' @import data.table
-#' @import DT
 #' @import shiny
 #' @import shinyWidgets
 #' @import shinyFiles
-#' @import shinyscreenshot
+#' @importFrom shinyscreenshot screenshotButton
 #' @import stringr
 #' @import scales
 #' @import zoo
-#' @import jsonlite
+#' @importFrom jsonlite fromJSON
 #' @import caret
 #' @import shinythemes
 #' @import ggplot2
@@ -100,7 +97,7 @@ TransformData <- function(InputData, nameList, separator, numerName){
   Output <- InputData %>%
     arrange(data.set.name, frame.number) %>%
     mutate(n = data.set.name) %>%
-    separate(n, nameList, sep = as.character(separator))
+    separate(n, nameList, sep = as.character(separator), fill = "right")
 
   for(i in numerName) {
 
@@ -356,7 +353,7 @@ MakeZeroNA <- function(InputDataSet)
 #' x-y coordinates of trajectories along with their registered track.
 
 MakeLongForm <- function(InputMatrix) {
-  LongForm <- data_frame(frame.number = rep(1:(nrow(InputMatrix)), (ncol(InputMatrix)/2)),
+  LongForm <- tibble(frame.number = rep(1:(nrow(InputMatrix)), (ncol(InputMatrix)/2)),
                          X = InputMatrix[, 1:(ncol(InputMatrix)/2)] %>%
                            unlist() %>%
                            as.vector(),
@@ -441,11 +438,12 @@ ArrangeData <- function(RawDataSet, DetectedTrajectories){
     select(-c(see, see2))
 
   new.id <- output %>%
-    group_indices(trajectory.id)
+    group_by(trajectory.id) %>%
+    group_indices()
 
   output$trajectory.id <- new.id
 
-  output <- left_join(output, RawDataSet)
+  output <- left_join(output, RawDataSet, by = join_by(frame.number, X, Y))
 
 
   output$data.set.name[is.na(output$data.set.name)] <- output$data.set.name[1]
@@ -453,11 +451,22 @@ ArrangeData <- function(RawDataSet, DetectedTrajectories){
   output$protein[is.na(output$protein)] <- output$protein[1]
   output$frame.interval[is.na(output$frame.interval)] <- output$frame.interval[1]
   output$analysis.id[is.na(output$analysis.id)] <- output$analysis.id[1]
-  output$expr.cond1[is.na(output$expr.cond1)] <- output$expr.cond1[1]
-  output$expr.cond2[is.na(output$expr.cond2)] <- output$expr.cond2[1]
-  output$expr.cond3[is.na(output$expr.cond3)] <- output$expr.cond3[1]
-  output$expr.cond4[is.na(output$expr.cond4)] <- output$expr.cond4[1]
-  output$expr.cond5[is.na(output$expr.cond5)] <- output$expr.cond5[1]
+  if ("expr.cond1" %in% colnames(output)) {
+    output$expr.cond1[is.na(output$expr.cond1)] <- output$expr.cond1[1]
+  }
+  if ("expr.cond2" %in% colnames(output)) {
+    output$expr.cond2[is.na(output$expr.cond2)] <- output$expr.cond2[1]
+  }
+  if ("expr.cond3" %in% colnames(output)) {
+    output$expr.cond3[is.na(output$expr.cond3)] <- output$expr.cond3[1]
+  }
+  if ("expr.cond4" %in% colnames(output)) {
+    output$expr.cond4[is.na(output$expr.cond4)] <- output$expr.cond4[1]
+  }
+  if ("expr.cond5" %in% colnames(output)) {
+    output$expr.cond5[is.na(output$expr.cond5)] <- output$expr.cond5[1]
+  }
+
   output$signal.type[is.na(output$intensity)] <- output$signal.type[1]
   output$intensity[is.na(output$intensity)] <- 0
 
@@ -655,7 +664,8 @@ AddVisualInspection <- function(data.set, TrajsToInspect){
     mutate(visual.inspection = TRUE) %>%
     select(-x.range) %>% ungroup()
 
-  data.set <- left_join(data.set, visual.inpsection.filter) %>%
+  data.set <- left_join(data.set, visual.inpsection.filter,
+                        by = join_by(trajectory.id, sub.data.set.name)) %>%
     mutate(visual.inspection = ifelse(is.na(visual.inspection),
                                       FALSE, visual.inspection))
 
@@ -767,7 +777,7 @@ AddRotatedCoord <- function(data.set){
 
   data.set %<>%
     filter(!is.na(sub.data.set.name)) %>%
-    left_join(.,fit.on.trajectory) %>%
+    left_join(.,fit.on.trajectory, by = join_by(sub.data.set.name)) %>%
     rowwise() %>%
     mutate(r.X = RotatePoints(X, Y, -fit.slope)[1],
            r.Y = RotatePoints(X, Y, -fit.slope)[2]) %>%
@@ -779,10 +789,10 @@ AddRotatedCoord <- function(data.set){
            !is.na(sub.data.set.name)) %>%
     group_by(sub.data.set.name) %>%
     summarise(x.translate = mean(X) - mean(r.X),
-              y.translate = mean(Y)- mean(r.Y))
+              y.translate = mean(Y) - mean(r.Y))
 
   data.set %<>% filter(!is.na(sub.data.set.name)) %>%
-    left_join(.,anchor.point) %>%
+    left_join(.,anchor.point, by = join_by(sub.data.set.name)) %>%
     mutate(r.X = r.X + x.translate, r.Y = r.Y + y.translate)
 
   return(data.set)
@@ -835,7 +845,7 @@ AddStuckFilter <- function(data.set, gauge){
     mutate(sd.x = sd(r.X), sd.y = sd(r.Y),
            range.x = max(r.X) - min(r.X),
            range.y = max(r.Y) - min(r.Y)) %>%
-    left_join(., stuck.filters) %>%
+    left_join(., stuck.filters, by = join_by(data.set.name)) %>%
     mutate(stuck.filter = ifelse(sd.x > sd.x.stuck.filter |
                                    sd.y > sd.y.stuck.filter,
                                  TRUE, FALSE)) %>%
@@ -891,7 +901,7 @@ AddFlankFilter <- function(data.set, gauge){
   data.set %<>%
     group_by(trajectory.unique.id) %>%
     mutate(range.y = max(r.Y) - min(r.Y), offset = mean(r.Y)) %>%
-    left_join(., on.dna.filters) %>%
+    left_join(., on.dna.filters, by = join_by(sub.data.set.name)) %>%
     mutate(on.dna.filter = ifelse(sd.y < sd.y.flank.filter &
                                     range.y < range.y.flank.filter &
                                     abs(offset - y.offset.filter) <
@@ -931,7 +941,7 @@ AddIntensityFilter <- function(data.set, gauge){
 
   data.set %<>% group_by(trajectory.unique.id) %>%
     mutate(mean.intensity = mean(intensity)) %>%
-    left_join(., intensity.filters) %>%
+    left_join(., intensity.filters, by = join_by(data.set.name)) %>%
     mutate(intensity.filter =
              ifelse(mean.intensity < intensity.limit, TRUE, FALSE)) %>%
     ungroup()
@@ -1016,77 +1026,5 @@ AddBindingLifetime <- function(data.set, protein.filter,
 
 }
 
-#' @useDynLib SMITracker
-#' @importFrom Rcpp sourceCpp
-#' @exportPattern "^[[:alpha:]]+"
-NULL
 
-##### Calculating instantaneous diffusion rate #####
-
-
-# Rcpp::cppFunction('
-#   NumericVector localMSDcomplete(NumericVector positions, int windowSize) {
-#
-#   int n = positions.size();
-#
-#   if (windowSize >= n) {
-#     windowSize = n - 1;
-#   }
-#
-#   // container for results
-#   NumericMatrix mat(n-1, windowSize-1);
-#
-#   // container for mean square displacements
-#   NumericVector msds(n);
-#   // calculate square displacement at each distance
-#   for(int j = 1; j < windowSize; j++) {
-#
-#     // container for square displacements internally
-#     // NumericVector msds_internal(n-j);
-#
-#     for(int i = 0; i < n-j; i++) {
-#
-#       double value = 0;
-#       int kk = 0;
-#
-#       // max aggregation windowlength
-#       int aggWindowLength = windowSize-1;
-#       if (n-i-j < windowSize-1){
-#         aggWindowLength = n-i-j;
-#       }
-#
-#
-#       // aggregate square displacements
-#       for(int k = 0; k<aggWindowLength; k++) { //windowSize-1
-#         // local difference
-#         double tmp = positions(i+k) - positions(i+j+k);
-#         // aggregated square values
-#         value = value + tmp * tmp;
-#
-#         kk = k;
-#       }
-#
-#       // mean of values
-#       value = value/(kk+1);
-#
-#
-#       mat(i,j-1) = value / j;
-#
-#       // msds_internal(i) = value;
-#     }
-#     // msds(j-1) = mean(msds_internal) ;
-#   }
-#
-#   for (int j = 0; j <= n - windowSize; j++) {
-#     msds(j) = mean(mat(j,_ ));
-#   }
-#
-#   // NumericVector output(1);
-#
-#   // output(0) = mean(msds);
-#
-#
-#   return(msds);
-# }
-# ')
 

@@ -136,7 +136,8 @@ app_ui <- function(request) {
                             actionButton(inputId = "start", label = "Start"),
                             br(),
                             br(),
-                            numericInput("num", label = "Select the dataset", value = 1),
+                            numericInput("num", label = "Select the dataset", value = 1,
+                                         min = 1),
                             br(),
                             br(),
                             h5(strong("Select relevant data points from the plot on the left and
@@ -155,17 +156,16 @@ app_ui <- function(request) {
                             br(),
                             actionButton(inputId = "next.data.set", "Next dataset"),
                             br(),
+                            br(),
+                            br(),
+                            br(),
+                            br(),
+                            br(),
+                            br(),
+                            br(),
                             h5(strong("For repeating the selection for each dataset first
                                          reset the current selection")),
                             actionButton(inputId = "reset", label = "Reset selection"),
-
-                            br(),
-                            br(),
-                            br(),
-                            br(),
-                            br(),
-                            br(),
-                            br(),
                             br()),
 
                           wellPanel(
@@ -255,7 +255,8 @@ app_ui <- function(request) {
                                     br(),
                                     br(),
                                     br(),
-                                    numericInput("num2", label = "Select the data set", value = 1)),
+                                    numericInput("num2", label = "Select the data set", value = 1,
+                                                 min = 1)),
                           wellPanel(br(),
                                     h5("Here is the directory where the output will be stored (can be changed in the first tab):"),
                                     br(),
@@ -324,6 +325,7 @@ app_ui <- function(request) {
                           wellPanel(
                             fileInput("file51", label = "File input from tab 1", accept = ".rds"),
                             fileInput("file52", label = "File input from tab 4", accept = ".rds"),
+                            actionButton(inputId = "noise.filters", label = "Exclude noise"),
                             checkboxGroupInput("checkGroup", h3("Detected data"),
                                                choices = list("Noise-excluded data" = "Noise-excluded data",
                                                               "Surface-bound emitters" = "Surface-bound emitters",
@@ -340,7 +342,6 @@ app_ui <- function(request) {
                             sliderInput("intensity.gauge", "Intensity filter gauge",
                                         min = 0, max = 10,
                                         value = 3),
-                            actionButton(inputId = "noise.filters", label = "Exclude the noise"),
                             numericInput("num51", label = "Select the data set", value = 1, min = 1)
                           ),
                           wellPanel(

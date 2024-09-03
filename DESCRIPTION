@@ -16,13 +16,11 @@ License: MIT + file LICENSE
 URL: https://github.uio.no/dScience/SMITracker.git
 BugReports: https://github.uio.no/dScience/SMITracker.git/issues
 Imports: 
-    DT (>= 0.31),
     Rcpp,
     RcppRoll (>= 0.3.0),
     broom (>= 1.0.5),
     caret (>= 6.0.94),
     config (>= 0.3.2),
-    data.table (>= 1.14.10),
     dplyr (>= 1.1.4),
     ggplot2 (>= 3.4.4),
     golem (>= 0.4.1),
@@ -36,7 +34,6 @@ Imports:
     shinythemes (>= 1.2.0),
     stringr (>= 1.5.1),
     tidyr (>= 1.3.0),
-    viridis (>= 0.6.4),
     zoo (>= 1.8.12)
 Suggests: 
     spelling,
