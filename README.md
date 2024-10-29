@@ -1,61 +1,93 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
 <!-- badges: start -->
 
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
 <!-- badges: end -->
 
 # SMITracker
 
-![](images/clipboard-2249885403.png)
 
-This package is an interactive analysis platform that enables the users
-to detect and track fluorescently-labeled single molecules scanning a
-linear substrates. In a typical experiment to collect a few number of
-short-lived interactions, large number of frames are recorded. Finding
-the spatio-temporal coordinates of those events of target is the
-challenge that this package helps solving. Prior to analysis using this
-platform, all the existing signals in the recorded images need to be
-localized in ‘FIJI’ using a single molecule localization plug-in called
-‘ThunderSTORM’.
+This page contains the source code for Single Molecule Interaction Tracker (SMITracker) platform. SMITracker is an interactive analysis platform that enables the users to detect and track fluorescently-labeled single molecules scanning linear substrates. Prior to analysis using SMITracker, all the existing signals in the recorded images need to be localized in ‘FIJI’ using a single molecule localization plug-in called ‘ThunderSTORM’. This can be done manually using the ThunderSTORM interface, or it can be done automatically using the script provided in this page under the name `localization_analysis.ijm`.
 
-## Installation
+SMITracker can be installed and run as an **R package** in R or it can be run inside a **Docker container**. For thorough information on preprocessing and analysis of data using SMITracker, read the corresponding paper (link to the published paper). Here, we only provide instructions for retrieving and running the platform both as an R package and as a Docker image.
 
-You can install the development version of SMITracker from github,
-follow the steps below:
+### Install and run SMITracker inside R (for R users)
 
-1.  Install the remote package, If you do not already have it:
+Open an R console and run the following commands: 
+
+1. **install devtools**(if not installed already):
 
 ``` r
+install.packages("devtools")
 
-install.packages("remotes")
 ```
-
-2.  Now you can install SMITracker package from GitHub, the current
-    GitHub repo is on UIO Enterprise version (potentially need to be
-    fixed later)
+2. **Install SMITracker from GitHub:** 
 
 ``` r
+devtools::install_github("ArashAh/testSMITracker")
 
-remotes::install_github("https://github.uio.no/dScience/SMITracker.git")
 ```
+3. **Initiate the interface and analyze the data:**
 
-## Example
-
-This package can be called using library function in R and afterwards
-the interface is launched by simply running run_app() function.
 
 ``` r
-library(SMITracker)
+SMITracker::run_app()
 
-run_app()
 ```
 
-For more detailed information on how to analyse your data using the
-interface refer to the original paper explaining the package.
+### Build and run SMITracker inside a container (for Docker users)
+
+Make sure you have Docker installed on your machine. Open a terminal, 
+navigate to a directory to clone this repository and run the following commands: 
+
+1. **Clone the repository**:
+
+```sh
+git clone https://github.com/ArashAh/testSMITracker
+cd testSMITracker/deploy/
+```
+
+2. **Build the base Docker image**:
+
+```sh
+docker build -f Dockerfile_base --progress=plain -t smitracker_base .
+```
+
+3. **Build the Docker image of the platform**:
+
+```sh
+docker build -f Dockerfile --progress=plain -t smitracker:latest .
+```
+
+4. **Run the Docker container: **:
+
+```sh
+docker run --rm -p 2030:80 --mount type=bind,source=<directory_in_the_local_computer>,target=/home smitracker:latest
+```
+
+Replace `<directory_in_the_local_computer>` with the actual path to the directory you want to mount; this directory should contain your data. 
+
+5. **Open the interface inside a browser and analyze the data**
+```link
+http://localhost:2030/ 
+```
+
+
+#### Stopping the Docker Container from Running
+
+1. **List running Docker containers**:
+
+    ```sh
+    docker ps
+    ```
+If the same terminal running the container is non-responsive, open another terminal and run the command there. 
+2. **Copy the `CONTAINER ID`**.
+
+3. **Stop the container**:
+
+    ```sh
+    docker stop <CONTAINER_ID>
+    ```
+
+Replace `<CONTAINER_ID>` with the actual container ID you copied.
+
