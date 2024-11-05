@@ -124,7 +124,7 @@ app_server <- function(input, output, session) {
                                   input$plot_brush,
                                   allRows = TRUE)
     rv$collect.out.data <- bind_rows(rv$collect.out.data, rv$out.data1 %>%
-                                       mutate(sub.data.set.name = data.set.name , signal.type = "DNA trace") %>%
+                                       mutate(sub.data.set.name = data.set.name , signal.type = "Substrate trace") %>%
                                        rename("spatial.filter" = "selected_"))
 
     # saveRDS(rv$collect.out.data, paste("2_spatial_filtered_", rv$collect.out.data$analysis.id %>% unique(),
@@ -149,7 +149,7 @@ app_server <- function(input, output, session) {
                                   allRows = TRUE)
     rv$collect.out.data <- bind_rows(rv$collect.out.data, rv$out.data2 %>%
                                        mutate(sub.data.set.name = paste(data.set.name,"sp",rv$j,sep = ""),
-                                              signal.type = "DNA trace") %>%
+                                              signal.type = "Substrate trace") %>%
                                        rename("spatial.filter" = "selected_"))
 
 
@@ -228,7 +228,13 @@ app_server <- function(input, output, session) {
                  max(my.data.filtered()$X) +200)) +
           ylim(c(min(my.data.filtered()$Y) -50,
                  max(my.data.filtered()$Y) +50))+
-          ggtitle("Spatially filtered data sets")
+          ggtitle("Spatially filtered data sets")+
+          scale_color_manual(name = "Signal type",
+                             values = c("#F8766D", "#00BFC4"),
+                             labels = c("Substrate trace" = "Substrate trace",
+                                        "stuck" = "Surface bound"))
+
+
       })
     }
 
@@ -247,19 +253,27 @@ app_server <- function(input, output, session) {
     }
   })
 
+  observe({
+    out <<-    rv$collect.out.data
+  })
 
   observeEvent(input$intensity, {
     output$intensity.plot <- renderPlot({
-      my.data() %>% filter(intensity > 1 ) %>%
         ggplot()+
-        geom_density(aes(x = intensity), color = "black")+
-        geom_density(data = rv$collect.out.data %>%
-                       filter(spatial.filter),
+        geom_density(data = bind_rows(rv$collect.out.data %>%
+                                        filter(spatial.filter),
+                                      my.data() %>%
+                                        mutate(signal.type = "Before spatial filtering")),
                      aes(x = intensity, color = signal.type),
                      na.rm = TRUE) +
         scale_x_log10(breaks= c(10,100,1000,10000),
                       limits = c(1, max(my.data()$intensity))) +
-        ggtitle("Distribution of intensity of the localized data")})
+        ggtitle("Distribution of intensity of the localized data")+
+        scale_color_manual(name = "Signal type",
+                           values = c("black", "#F8766D", "#00BFC4"),
+                             labels = c("Substrate trace" = "Substrate trace",
+                                        "stuck" = "Surface bound",
+                                        "Before spatial filtering" = "Before spatial filtering"))})
 
 
   })
@@ -313,7 +327,7 @@ app_server <- function(input, output, session) {
   observeEvent(c(input$detect, input$reanalyse), {
     withProgress(message = 'Processing detections...', {
 
-      incProgress(0.25, detail = "Detecting trajectories (DNA trace signals)")
+      incProgress(0.25, detail = "Detecting trajectories (Substrate trace signals)")
       rv$collect.detected.data.d <- detectTrajectories(
         filteredDataSet = filtered.data() %>% filter(signal.type != "stuck"),
         dxMax = input$max.dx,
@@ -360,7 +374,11 @@ app_server <- function(input, output, session) {
           facet_wrap(~direction.of.displacement) +
           xlab("Displacement per frame (nm)") +
           ylab("Counts (frames)") +
-          ggtitle("Distribution of displacement per frames")
+          ggtitle("Distribution of displacement per frames")+
+          scale_fill_manual(name = "Signal type",
+                             values = c("#F8766D", "#00BFC4"),
+                             labels = c("Substrate trace" = "Substrate trace",
+                                        "stuck" = "Surface bound"))
       })
 
       output$plot32 <- renderPlot({
@@ -371,7 +389,10 @@ app_server <- function(input, output, session) {
           geom_histogram(aes(x = x.range, fill = visual.inspection), bins = 30) +
           xlab("Range per trajectory (nm)") +
           ylab("Counts (frames)") +
-          ggtitle("Distribution of range of the detected movements along DNA")
+          ggtitle("Distribution of range of the detected movements along substrate") +
+          scale_fill_manual(name = "Selected for visual inspection",
+                             values = c("#F8766D", "#00BFC4"),
+                             labels = c("No", "Yes"))
       })
 
       rv$limits <- rv$collect.detected.data %>%
@@ -394,9 +415,9 @@ app_server <- function(input, output, session) {
 
   output$eval <-  renderText({ req(rv$limits)
     c (if (rv$limits$xlimit > 0.01) {
-      print("Increase max displacement along DNA by ~20 % and re-analyse")},
+      print("Increase max displacement along substrate by ~20 % and re-analyse")},
       if(rv$limits$ylimit > 0.01) {
-        print("Increase max displacement accros DNA by ~20 % and re-analyse")},
+        print("Increase max displacement accros substrate by ~20 % and re-analyse")},
       if(rv$limits$xlimit < 0.01 & rv$limits$ylimit < 0.01  ) {
         print("Max displacements approved!")}
     )
@@ -429,7 +450,11 @@ app_server <- function(input, output, session) {
         ylim(c(min(rv$collect.detected.data %>%
                      filter(data.set.name == as.character(list.of.data.sets2()[input$num2,])) %>% "$" (Y)) -1000,
                max(rv$collect.detected.data %>%
-                     filter(data.set.name == as.character(list.of.data.sets2()[input$num2,])) %>% "$" (Y)) +1000))
+                     filter(data.set.name == as.character(list.of.data.sets2()[input$num2,])) %>% "$" (Y)) +1000))+
+        scale_color_manual(name = "Signal type",
+                          values = c("#F8766D", "#00BFC4"),
+                          labels = c("Substrate trace" = "Substrate trace",
+                                     "stuck" = "Surface bound"))
     })
   }
   )
@@ -474,22 +499,22 @@ app_server <- function(input, output, session) {
 
     #show.data4 <<- rv$transformed.data
 
-    trajectory.address <- rv$transformed.data %>%
-      MakeTrajectoryAddress()
-
-    write.table(trajectory.address,
-                paste(folder.path2(),"/", rv$transformed.data$analysis.id %>% unique(),
-                      "_trajectory_address_",
-                      as.character(Sys.Date()), ".txt", sep =""),
-                sep = "\t", col.names = TRUE)
-
-    to.cut.data.sets <- trajectory.address$file.name
-
-    write.table(to.cut.data.sets,
-                paste(folder.path2(),"/",
-                      rv$transformed.data$analysis.id %>% unique(),"_file_name_",
-                      as.character(Sys.Date()), ".txt", sep =""),
-                quote = FALSE, row.names = FALSE)
+    # trajectory.address <- rv$transformed.data %>%
+    #   MakeTrajectoryAddress()
+    #
+    # write.table(trajectory.address,
+    #             paste(folder.path2(),"/", rv$transformed.data$analysis.id %>% unique(),
+    #                   "_trajectory_address_",
+    #                   as.character(Sys.Date()), ".txt", sep =""),
+    #             sep = "\t", col.names = TRUE)
+    #
+    # to.cut.data.sets <- trajectory.address$file.name
+    #
+    # write.table(to.cut.data.sets,
+    #             paste(folder.path2(),"/",
+    #                   rv$transformed.data$analysis.id %>% unique(),"_file_name_",
+    #                   as.character(Sys.Date()), ".txt", sep =""),
+    #             quote = FALSE, row.names = FALSE)
   })
 
 
@@ -666,7 +691,7 @@ app_server <- function(input, output, session) {
                        geom_point(data = filtered_det_data,
                                   aes(x = X, y = Y, color = detected.data)) +
                        scale_color_manual(values = c("Noise-excluded data" = "red", "Short-lived noise" = "blue",
-                                                     "High/low intensity noise" = "dark blue", "Surface-bound emitters" = "green",
+                                                     "High/low intensity noise" = "cyan", "Surface-bound emitters" = "green",
                                                      "Non-linear movements" = "yellow")) +
                        ggtitle("Original coordinates") + xlab("X") + ylab("Y")
                    })

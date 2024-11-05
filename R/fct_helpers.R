@@ -976,7 +976,7 @@ ArrangeFilters <- function(data.set){
                                                detected.data),
                        detected.data = ifelse(!intensity.filter &
                                                 duration.filter,
-                                               "High/low intensty noise",
+                                               "High/low intensity noise",
                                               detected.data),
                        detected.data = ifelse(!stuck.filter &
                                                 intensity.filter &

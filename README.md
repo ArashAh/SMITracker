@@ -37,7 +37,7 @@ SMITracker::run_app()
 
 ### Build and run SMITracker inside a container (for Docker users)
 
-Make sure you have Docker installed on your machine. Open a terminal, 
+Make sure you have Git and Docker installed on your machine. Open a terminal, 
 navigate to a directory to clone this repository and run the following commands: 
 
 1. **Clone the repository**:
@@ -81,6 +81,7 @@ http://localhost:2030/
     docker ps
     ```
 If the same terminal running the container is non-responsive, open another terminal and run the command there. 
+
 2. **Copy the `CONTAINER ID`**.
 
 3. **Stop the container**:
