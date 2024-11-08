@@ -582,11 +582,6 @@ detectStuck <- function(filteredDataSet, dxMax , dyMax ){
                                        "$"(sub.data.set.name) %>%
                                        unique())*4/3)) ,
                 " %", sep = ""))
-    # report <- paste("Processing: ", j, " / ", length(filteredDataSet %>%
-    #                                         "$"(sub.data.set.name) %>%
-    #                                         unique())*4/3 , sep="")
-
-    #  Separate the data sets into raw and filtered
 
     detected.trajectories <- filteredDataSet %>%
       filter(sub.data.set.name == i) %>%

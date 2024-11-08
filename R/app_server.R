@@ -24,14 +24,14 @@ app_server <- function(input, output, session) {
 
 
   output$folderpath <- renderText(list.files(path = folder.path())[1])
-  #
-  #output$folderpath <- renderText(getwd())
+
 
   observeEvent(input$load, {
     withProgress(message = 'Loading data...', {
 
       incProgress(0.1, detail = "Reading JSON files")
-      rv$collect.data <- readJsonFiles(paste((folder.path()),"/",sep = ""), nEnd = nchar(input$dataset.name.s))
+      rv$collect.data <- readJsonFiles(paste((folder.path()),"/",sep = ""),
+                                       nEnd = nchar(input$dataset.name.s))
 
       incProgress(0.3, detail = "Transforming data")
       rv$collect.data <- TransformData(InputData = rv$collect.data,
@@ -73,7 +73,7 @@ app_server <- function(input, output, session) {
     })
   })
 
-  shinyDirChoose(input,'folder2', roots=roots, filetypes=c('','json'))
+  shinyDirChoose(input,'folder2', roots = roots, filetypes = c('','json'))
 
 
    folder.path2 <- reactive({req(input$folder2)
@@ -106,10 +106,11 @@ app_server <- function(input, output, session) {
     readRDS(input$file1$datapath)})
 
 
-  list.of.data.sets <-reactive(my.data() %>%
-                                 select(data.set.name)%>% unique())
+  list.of.data.sets <- reactive(my.data() %>%
+                                 select(data.set.name) %>% unique())
   my.data.filtered <- reactive(my.data() %>%
-                                 filter(data.set.name == as.character(list.of.data.sets()[input$num,])))
+                                 filter(data.set.name ==
+                                          as.character(list.of.data.sets()[input$num,])))
 
   observe({
     updateNumericInput(session, "num", max = nrow(list.of.data.sets()))
@@ -124,14 +125,13 @@ app_server <- function(input, output, session) {
                                   input$plot_brush,
                                   allRows = TRUE)
     rv$collect.out.data <- bind_rows(rv$collect.out.data, rv$out.data1 %>%
-                                       mutate(sub.data.set.name = data.set.name , signal.type = "Substrate trace") %>%
+                                       mutate(sub.data.set.name = data.set.name ,
+                                              signal.type = "Substrate trace") %>%
                                        rename("spatial.filter" = "selected_"))
 
-    # saveRDS(rv$collect.out.data, paste("2_spatial_filtered_", rv$collect.out.data$analysis.id %>% unique(),
-    #                                 "_", as.character(Sys.Date()), ".rds", sep = ""))
+
 
     rv$prog.rep <- rv$collect.out.data$data.set.name %>% unique()
-    #print(nrow(rv$collect.out.data))
 
   })
 
@@ -143,50 +143,38 @@ app_server <- function(input, output, session) {
 
   observeEvent(input$split, {
     rv$j = rv$j + 1
-    #print(rv$j)
+
     rv$out.data2 <- brushedPoints(my.data.filtered(),
                                   input$plot_brush,
                                   allRows = TRUE)
     rv$collect.out.data <- bind_rows(rv$collect.out.data, rv$out.data2 %>%
-                                       mutate(sub.data.set.name = paste(data.set.name,"sp",rv$j,sep = ""),
+                                       mutate(sub.data.set.name = paste(data.set.name,"sp",
+                                                                        rv$j,sep = ""),
                                               signal.type = "Substrate trace") %>%
                                        rename("spatial.filter" = "selected_"))
 
-
-    # saveRDS(rv$collect.out.data, paste("2_spatial_filtered_", rv$collect.out.data$analysis.id %>% unique(),
-    #                                 "_", as.character(Sys.Date()), ".rds", sep = ""))
-
     rv$prog.rep <- rv$collect.out.data$data.set.name %>% unique()
 
-
-    #print(nrow(rv$collect.out.data))
   })
 
 
 
   observeEvent(input$stuck, {
     rv$i = rv$i + 1
-    #print(rv$i)
     rv$out.data3 <- brushedPoints(my.data.filtered(),
                                   input$plot_brush,
                                   allRows = TRUE)
     rv$collect.out.data <- bind_rows(rv$collect.out.data, rv$out.data3 %>%
-                                       mutate(sub.data.set.name = paste(data.set.name,"st", rv$i,sep = ""),
+                                       mutate(sub.data.set.name = paste(data.set.name,"st",
+                                                                        rv$i,sep = ""),
                                               signal.type = "stuck") %>%
                                        rename("spatial.filter" = "selected_"))
+  rv$prog.rep <- rv$collect.out.data$data.set.name %>% unique()
 
-
-    # saveRDS(rv$collect.out.data, paste("2_spatial_filtered_", rv$protein.name,
-    #                                    "_", as.character(Sys.Date()), ".rds", sep = ""))
-
-    rv$prog.rep <- rv$collect.out.data$data.set.name %>% unique()
-
-
-    #print(nrow(rv$collect.out.data))
   })
 
   observeEvent(input$next.data.set, {
-    # Update the numericInput value to +1
+
     updateNumericInput(session, "num", value = input$num + 1)
   })
 
@@ -197,19 +185,16 @@ app_server <- function(input, output, session) {
 
     output$plot2 <- renderPlot({
       my.data.filtered() %>%
-        ggplot(aes(x=X, y=Y)) + geom_point(size = 0.1)+
-        xlim(c(min(my.data.filtered()$X) -50,
-               max(my.data.filtered()$X) +1050)) +
-        ylim(c(min(my.data.filtered()$Y) -50,
-               max(my.data.filtered()$Y) +50))+
+        ggplot(aes(x = X, y = Y)) + geom_point(size = 0.1) +
+        xlim(c(min(my.data.filtered()$X) - 50,
+               max(my.data.filtered()$X) + 1050)) +
+        ylim(c(min(my.data.filtered()$Y) - 50,
+               max(my.data.filtered()$Y) + 50)) +
         ggtitle("Raw data visualization")
     })
 
-    # saveRDS(rv$collect.out.data, paste("2_spatial_filtered_", rv$collect.out.data$analysis.id %>% unique(),
-    #                                 "_", as.character(Sys.Date()), ".rds", sep = ""))
-
     rv$prog.rep <- rv$collect.out.data$data.set.name %>% unique()
-    #print(nrow(rv$collect.out.data))
+
 
   })
 
@@ -223,18 +208,16 @@ app_server <- function(input, output, session) {
         rv$collect.out.data %>%
           filter(data.set.name == as.character(list.of.data.sets()[input$num,]),
                  spatial.filter) %>%
-          ggplot() + geom_point(aes(x=X, y=Y, color =signal.type), size = 0.1)+
-          xlim(c(min(my.data.filtered()$X) -50,
-                 max(my.data.filtered()$X) +200)) +
-          ylim(c(min(my.data.filtered()$Y) -50,
-                 max(my.data.filtered()$Y) +50))+
-          ggtitle("Spatially filtered data sets")+
+          ggplot() + geom_point(aes(x = X, y = Y, color = signal.type), size = 0.1) +
+          xlim(c(min(my.data.filtered()$X) - 50,
+                 max(my.data.filtered()$X) + 200)) +
+          ylim(c(min(my.data.filtered()$Y) - 50,
+                 max(my.data.filtered()$Y) + 50)) +
+          ggtitle("Spatially filtered data sets") +
           scale_color_manual(name = "Signal type",
                              values = c("#F8766D", "#00BFC4"),
                              labels = c("Substrate trace" = "Substrate trace",
                                         "stuck" = "Surface bound"))
-
-
       })
     }
 
@@ -243,32 +226,29 @@ app_server <- function(input, output, session) {
 
       output$plot1 <- renderPlot({
         my.data.filtered() %>%
-          ggplot(aes(x=X, y=Y)) + geom_point(size = 0.1, alpha = 0.2) +
-          xlim(c(min(my.data.filtered()$X) -50,
-                 max(my.data.filtered()$X) +1050)) +
-          ylim(c(min(my.data.filtered()$Y) -50,
-                 max(my.data.filtered()$Y) +50))+ ggtitle("Raw data visualization")
+          ggplot(aes(x = X, y = Y)) + geom_point(size = 0.1, alpha = 0.2) +
+          xlim(c(min(my.data.filtered()$X) - 50,
+                 max(my.data.filtered()$X) + 1050)) +
+          ylim(c(min(my.data.filtered()$Y) - 50,
+                 max(my.data.filtered()$Y) + 50)) + ggtitle("Raw data visualization")
 
       })
     }
   })
 
-  observe({
-    out <<-    rv$collect.out.data
-  })
 
   observeEvent(input$intensity, {
     output$intensity.plot <- renderPlot({
-        ggplot()+
+        ggplot() +
         geom_density(data = bind_rows(rv$collect.out.data %>%
                                         filter(spatial.filter),
                                       my.data() %>%
                                         mutate(signal.type = "Before spatial filtering")),
                      aes(x = intensity, color = signal.type),
                      na.rm = TRUE) +
-        scale_x_log10(breaks= c(10,100,1000,10000),
+        scale_x_log10(breaks = c(10,100,1000,10000),
                       limits = c(1, max(my.data()$intensity))) +
-        ggtitle("Distribution of intensity of the localized data")+
+        ggtitle("Distribution of intensity of the localized data") +
         scale_color_manual(name = "Signal type",
                            values = c("black", "#F8766D", "#00BFC4"),
                              labels = c("Substrate trace" = "Substrate trace",
@@ -286,31 +266,15 @@ app_server <- function(input, output, session) {
       mutate(intensity.filter = ifelse(intensity < input$min.intensity |
                                          intensity > input$max.intensity , FALSE, TRUE )) %>%
       filter(spatial.filter, intensity.filter) %>%
-      select(-spatial.filter, - intensity.filter)
+      select(-spatial.filter, -intensity.filter)
 
     #show.data2 <<-rv$collect.out.data.to.save
 
 
-    saveRDS(rv$collect.out.data.to.save, paste(folder.path2(),"/","2_spatial_filtered_", rv$collect.out.data$analysis.id %>% unique(),
+    saveRDS(rv$collect.out.data.to.save, paste(folder.path2(),"/","2_spatial_filtered_",
+                                               rv$collect.out.data$analysis.id %>% unique(),
                                                "_", as.character(Sys.Date()), ".rds", sep = ""))
 
-    # output$summary3 <- renderDataTable ({
-    # rv$collect.out.data %>%
-    # group_by(data.set.name, spatial.filter, intensity.filter) %>%
-    # summarise(frames = length(unique(frame.number)), observations = n()) %>%
-    # ungroup() %>%
-    # group_by(spatial.filter, intensity.filter) %>%
-    # summarise(data.sets = n(), frames = sum(frames), observations = sum(observations))
-    # })
-    #
-    # write.table(rv$collect.out.data %>%
-    #               group_by(data.set.name, spatial.filter, intensity.filter) %>%
-    #               summarise(frames = length(unique(frame.number)), observations = n()) %>%
-    #               ungroup() %>%
-    #               group_by(spatial.filter, intensity.filter) %>%
-    #               summarise(data.sets = n(), frames = sum(frames), observations = sum(observations)),
-    #               paste("2_Summary_", rv$collect.out.data$analysis.id %>% unique(), "_", as.character(Sys.Date()), ".txt", sep =""),
-    #               sep = "\t", col.names = TRUE)
 
   })
 
@@ -320,8 +284,6 @@ app_server <- function(input, output, session) {
   filtered.data <- reactive({
     req(input$file2)
     readRDS(input$file2$datapath)})
-
-
 
 
   observeEvent(c(input$detect, input$reanalyse), {
@@ -368,13 +330,14 @@ app_server <- function(input, output, session) {
           ungroup() %>%
           filter(!is.na(x.displacement.per.frame)) %>%
           select(x.displacement.per.frame, y.displacement.per.frame, signal.type) %>%
-          pivot_longer(cols = 1:2, names_to = "direction.of.displacement", values_to = "displacement") %>%
+          pivot_longer(cols = 1:2, names_to = "direction.of.displacement",
+                       values_to = "displacement") %>%
           ggplot() +
           geom_histogram(aes(x = displacement, fill = signal.type), bins = 30) +
           facet_wrap(~direction.of.displacement) +
           xlab("Displacement per frame (nm)") +
           ylab("Counts (frames)") +
-          ggtitle("Distribution of displacement per frames")+
+          ggtitle("Distribution of displacement per frames") +
           scale_fill_manual(name = "Signal type",
                              values = c("#F8766D", "#00BFC4"),
                              labels = c("Substrate trace" = "Substrate trace",
@@ -414,17 +377,17 @@ app_server <- function(input, output, session) {
   # output$prog.reporter <-  renderText({rv$prog.reporter})
 
   output$eval <-  renderText({ req(rv$limits)
-    c (if (rv$limits$xlimit > 0.01) {
+    c(if (rv$limits$xlimit > 0.01) {
       print("Increase max displacement along substrate by ~20 % and re-analyse")},
-      if(rv$limits$ylimit > 0.01) {
+      if (rv$limits$ylimit > 0.01) {
         print("Increase max displacement accros substrate by ~20 % and re-analyse")},
-      if(rv$limits$xlimit < 0.01 & rv$limits$ylimit < 0.01  ) {
+      if (rv$limits$xlimit < 0.01 & rv$limits$ylimit < 0.01) {
         print("Max displacements approved!")}
     )
   })
 
   list.of.data.sets2 <- reactive(filtered.data() %>%
-                                  select(data.set.name)%>%
+                                  select(data.set.name) %>%
                                   unique())
 
   output$full.name2 <- renderText({req(input$show)
@@ -436,21 +399,26 @@ app_server <- function(input, output, session) {
   observeEvent(input$show, {
 
     output$plot33 <- renderPlot({
-      ggplot()+
+      ggplot() +
         geom_point(data = filtered.data() %>%
                      filter(data.set.name == as.character(list.of.data.sets2()[input$num2,])),
-                   aes(x = X, y= Y), alpha = 0.2, color = "black") +
+                   aes(x = X, y = Y), alpha = 0.2, color = "black") +
         geom_point(data = rv$collect.detected.data %>%
-                     filter(data.set.name == as.character(list.of.data.sets2()[input$num2,]), duration.filter),
-                   aes(x = X, y= Y, color = signal.type), alpha = 1)+
+                     filter(data.set.name == as.character(list.of.data.sets2()[input$num2,]),
+                            duration.filter),
+                   aes(x = X, y = Y, color = signal.type), alpha = 1) +
         xlim(c(min(rv$collect.detected.data %>%
-                     filter(data.set.name == as.character(list.of.data.sets2()[input$num2,])) %>% "$" (X)) -1000,
+                     filter(data.set.name == as.character(list.of.data.sets2()[input$num2,])) %>%
+                     "$"(X)) - 1000,
                max(rv$collect.detected.data %>%
-                     filter(data.set.name == as.character(list.of.data.sets2()[input$num2,])) %>% "$" (X)) +1000)) +
+                     filter(data.set.name == as.character(list.of.data.sets2()[input$num2,])) %>%
+                     "$"(X)) + 1000)) +
         ylim(c(min(rv$collect.detected.data %>%
-                     filter(data.set.name == as.character(list.of.data.sets2()[input$num2,])) %>% "$" (Y)) -1000,
+                     filter(data.set.name == as.character(list.of.data.sets2()[input$num2,])) %>%
+                     "$"(Y)) - 1000,
                max(rv$collect.detected.data %>%
-                     filter(data.set.name == as.character(list.of.data.sets2()[input$num2,])) %>% "$" (Y)) +1000))+
+                     filter(data.set.name == as.character(list.of.data.sets2()[input$num2,]))
+                   %>% "$"(Y)) + 1000)) +
         scale_color_manual(name = "Signal type",
                           values = c("#F8766D", "#00BFC4"),
                           labels = c("Substrate trace" = "Substrate trace",
@@ -464,21 +432,11 @@ app_server <- function(input, output, session) {
 
   observeEvent(input$save2, {
 
-    #saveRDS(rv$collect.detected.data, "3_trajectories_detected.rds")
-
     saveRDS(rv$collect.detected.data, paste(folder.path2(),"/","3_trajectories_detected_",
                                             rv$collect.detected.data$analysis.id %>% unique(),
                                             "_", as.character(Sys.Date()), ".rds", sep = ""))
 
-    # write.table(rv$collect.detected.data %>%
-    #               group_by(data.set.name, duration.filter, visual.inspection ) %>%
-    #               summarise(frames = length(unique(frame.number)), observations = n()) %>%
-    #               ungroup() %>%
-    #               group_by(duration.filter, visual.inspection) %>%
-    #               summarise(data.sets = n(), frames = sum(frames), observations = sum(observations)),
-    #             paste("3_Summary_", rv$collect.detected.data$analysis.id %>% unique(),
-    #                   "_", as.character(Sys.Date()), ".txt", sep =""),
-    #             sep = "\t", col.names = TRUE)
+
   })
 
 
@@ -497,30 +455,15 @@ app_server <- function(input, output, session) {
       ungroup() %>%
       MakeTrajectoryUniqeID()
 
-    #show.data4 <<- rv$transformed.data
 
-    # trajectory.address <- rv$transformed.data %>%
-    #   MakeTrajectoryAddress()
-    #
-    # write.table(trajectory.address,
-    #             paste(folder.path2(),"/", rv$transformed.data$analysis.id %>% unique(),
-    #                   "_trajectory_address_",
-    #                   as.character(Sys.Date()), ".txt", sep =""),
-    #             sep = "\t", col.names = TRUE)
-    #
-    # to.cut.data.sets <- trajectory.address$file.name
-    #
-    # write.table(to.cut.data.sets,
-    #             paste(folder.path2(),"/",
-    #                   rv$transformed.data$analysis.id %>% unique(),"_file_name_",
-    #                   as.character(Sys.Date()), ".txt", sep =""),
-    #             quote = FALSE, row.names = FALSE)
   })
 
 
-  list.of.data.sets4 <-reactive({
+  list.of.data.sets4 <- reactive({
     req(rv$transformed.data)
-    rv$transformed.data %>% select(data.set.name)%>% unique()})
+    rv$transformed.data %>%
+      select(data.set.name) %>%
+      unique()})
   list.of.trajs4 <- reactive({
     req(rv$transformed.data)
     rv$transformed.data %>%
@@ -551,27 +494,27 @@ app_server <- function(input, output, session) {
 
 
     output$plot41 <- renderPlot({
-      ggplot()+
+      ggplot() +
         geom_point(data = rv$transformed.data %>%
                      filter(data.set.name == as.character(list.of.data.sets4()[input$num41,]),
                             visual.inspection, duration.filter),
-                   aes(x = X, y= Y, color = signal.type), alpha = 0.2) +
+                   aes(x = X, y = Y, color = signal.type), alpha = 0.2) +
         geom_point(data = rv$transformed.data %>%
                      filter(trajectory.unique.id == as.character(list.of.trajs4()[input$num42,]),
                             visual.inspection, duration.filter),
-                   aes(x = X, y= Y), color ="black") +
+                   aes(x = X, y = Y), color = "black") +
         xlim(c(min(rv$transformed.data %>%
                      filter(data.set.name == as.character(list.of.data.sets4()[input$num41,]),
-                            visual.inspection, duration.filter) %>% "$" (X)) -1000,
+                            visual.inspection, duration.filter) %>% "$"(X)) - 1000,
                max(rv$transformed.data %>%
                      filter(data.set.name == as.character(list.of.data.sets4()[input$num41,]),
-                            visual.inspection, duration.filter) %>% "$" (X)) +1000)) +
+                            visual.inspection, duration.filter) %>% "$"(X)) + 1000)) +
         ylim(c(min(rv$transformed.data %>%
                      filter(data.set.name == as.character(list.of.data.sets4()[input$num41,]),
-                            visual.inspection, duration.filter) %>% "$" (Y)) -1000,
+                            visual.inspection, duration.filter) %>% "$"(Y)) - 1000,
                max(rv$transformed.data %>%
                      filter(data.set.name == as.character(list.of.data.sets4()[input$num41,]),
-                            visual.inspection, duration.filter) %>% "$" (Y)) +1000)) +
+                            visual.inspection, duration.filter) %>% "$"(Y)) + 1000)) +
         ggtitle("Collection of trajectoires for visual inspection")
 
     })
@@ -580,20 +523,21 @@ app_server <- function(input, output, session) {
 
       rv$transformed.data %>%
         group_by(data.set.name) %>%
-        mutate(intensity.alarm = as.factor(ifelse(intensity > mean(intensity)*5, "High intensity", "Intensity"))) %>%
+        mutate(intensity.alarm = as.factor(ifelse(intensity > mean(intensity)*5,
+                                                  "High intensity", "Intensity"))) %>%
         ungroup() %>%
         filter(trajectory.unique.id == as.character(list.of.trajs4()[input$num42,]),
                visual.inspection, duration.filter) %>%
-        ggplot()+
-        geom_point(aes(x = X, y= frame.number, size = intensity, color = intensity.alarm )) +
-        geom_path(aes(x = X, y= frame.number), color = "black") +
+        ggplot() +
+        geom_point(aes(x = X, y = frame.number, size = intensity, color = intensity.alarm )) +
+        geom_path(aes(x = X, y = frame.number), color = "black") +
         xlim(c(min(rv$transformed.data %>%
                      filter(data.set.name == as.character(list.of.data.sets4()[input$num41,]),
-                            visual.inspection, duration.filter) %>% "$" (X)) -200,
+                            visual.inspection, duration.filter) %>% "$"(X)) - 200,
                max(rv$transformed.data %>%
                      filter(data.set.name == as.character(list.of.data.sets4()[input$num41,]),
-                            visual.inspection, duration.filter) %>% "$" (X)) +200)) +
-        scale_color_manual(values = c("High intensity" = "red", "Intensity" = "black"))+
+                            visual.inspection, duration.filter) %>% "$"(X)) + 200)) +
+        scale_color_manual(values = c("High intensity" = "red", "Intensity" = "black")) +
         ggtitle("X cooredinate of the selected trajectory
                     ")
 
@@ -605,9 +549,10 @@ app_server <- function(input, output, session) {
 
 
     rv$transformed.data <- rv$transformed.data %>%
-      mutate(visual.inspection = ifelse(trajectory.unique.id == as.character(list.of.trajs4()[input$num42,]),
+      mutate(visual.inspection = ifelse(trajectory.unique.id ==
+                                          as.character(list.of.trajs4()[input$num42,]),
                                         FALSE, visual.inspection))
-
+    #show.data4 <<- rv$transformed.data
   })
 
   observeEvent(input$save4, {
@@ -633,10 +578,10 @@ app_server <- function(input, output, session) {
                  input$checkGroup), {
                    rv$filtered.added.data <- detected.inspected.data() %>%
                      group_by(data.set.name) %>%
-                     mutate(remove.out = ifelse(sum(visual.inspection)==0, FALSE, TRUE)) %>%
+                     mutate(remove.out = ifelse(sum(visual.inspection) == 0, FALSE, TRUE)) %>%
                      filter(remove.out) %>%
                      AddRotatedCoord() %>%
-                     AddStuckFilter(gauge = 10- input$stuck.gauge) %>%
+                     AddStuckFilter(gauge = 10 - input$stuck.gauge) %>%
                      AddFlankFilter(gauge = input$flank.gauge) %>%
                      AddIntensityFilter(gauge = input$intensity.gauge) %>%
                      ArrangeFilters()  %>% filter(signal.type != "stuck")
@@ -644,11 +589,12 @@ app_server <- function(input, output, session) {
                    #show.data5 <<- rv$filtered.added.data
                  })
 
-  list.of.data.sets5 <-reactive({
+  list.of.data.sets5 <- reactive({
     req(rv$filtered.added.data)
     rv$filtered.added.data %>%
       ungroup() %>%
-      select(data.set.name)%>% unique()})
+      select(data.set.name) %>%
+      unique()})
   observe({
     updateNumericInput(session, "num51", max = nrow(list.of.data.sets5()))
   })
@@ -670,7 +616,6 @@ app_server <- function(input, output, session) {
                      filtered_data <- rv$filtered.added.data %>%
                        filter(data.set.name == dataset_name)
 
-                     # Calculate x and y limits excluding unimportant points
                      x_min <- min(filtered_data %>% filter(duration.filter) %>% pull(X)) - 1000
                      x_max <- max(filtered_data %>% filter(duration.filter) %>% pull(X)) + 1000
                      y_min <- min(filtered_data %>% filter(duration.filter) %>% pull(Y)) - 1000
@@ -685,13 +630,15 @@ app_server <- function(input, output, session) {
                               detected.data %in% input$checkGroup,
                               X >= x_min, X <= x_max, Y >= y_min, Y <= y_max)
 
-                     ggplot()+
+                     ggplot() +
                        geom_point(data = raw_filtered_data,
                                   aes(x = X, y = Y), color = "gray", alpha = 0.5) +
                        geom_point(data = filtered_det_data,
                                   aes(x = X, y = Y, color = detected.data)) +
-                       scale_color_manual(values = c("Noise-excluded data" = "red", "Short-lived noise" = "blue",
-                                                     "High/low intensity noise" = "cyan", "Surface-bound emitters" = "green",
+                       scale_color_manual(values = c("Noise-excluded data" = "red",
+                                                     "Short-lived noise" = "blue",
+                                                     "High/low intensity noise" = "cyan",
+                                                     "Surface-bound emitters" = "green",
                                                      "Non-linear movements" = "yellow")) +
                        ggtitle("Original coordinates") + xlab("X") + ylab("Y")
                    })
@@ -738,62 +685,47 @@ app_server <- function(input, output, session) {
   observeEvent(input$do.it5,{
     output$plot53 <- renderPlot({
 
-      # rv$filtered.added.data %>%
-      #   filter(trajectory.unique.id == as.character(list.of.trajs5()[input$num52,])) %>%
-      #   ggplot()+
-      #   geom_point(aes(x = r.X, y= frame.number, size = intensity)) +
-      #   ggtitle(paste ("Trajectory id: ", as.character(list.of.trajs5()[input$num52,]), sep = " ")) +
-      #   geom_path(aes(x = r.X, y= frame.number))  +
-      #   xlim(c(min(rv$filtered.added.data %>%
-      #                filter(data.set.name == as.character(list.of.data.sets5()[input$num51,]),
-      #                       duration.filter) %>% "$" (r.X)) -200,
-      #          max(rv$filtered.added.data %>%
-      #                filter(data.set.name == as.character(list.of.data.sets5()[input$num51,]),
-      #                      duration.filter) %>% "$" (r.X)) +200))
-
       rv$filtered.added.data %>%
         filter(trajectory.unique.id == as.character(list.of.trajs5()[input$num52,])) %>%
-        ggplot()+
-        geom_point(aes(x = r.X, y= frame.number, size = intensity)) +
-        ggtitle(paste ("Rotated X---Trajectory id: ", as.character(list.of.trajs5()[input$num52,]), sep = " ")) +
-        geom_path(aes(x = r.X, y= frame.number))  +
+        ggplot() +
+        geom_point(aes(x = r.X, y = frame.number, size = intensity)) +
+        ggtitle(paste("Rotated X---Trajectory id: ",
+                       as.character(list.of.trajs5()[input$num52,]),
+                       sep = " ")) +
+        geom_path(aes(x = r.X, y = frame.number))  +
         scale_x_continuous(limits =  c(min(rv$filtered.added.data %>%
-                                             filter(data.set.name == as.character(list.of.data.sets5()[input$num51,]),
-                                                    duration.filter) %>% "$" (r.X)) -200,
+                                             filter(data.set.name ==
+                                                      as.character(list.of.data.sets5()[input$num51,]),
+                                                    duration.filter) %>% "$"(r.X)) - 200,
                                        max(rv$filtered.added.data %>%
-                                             filter(data.set.name == as.character(list.of.data.sets5()[input$num51,]),
-                                                    duration.filter) %>% "$" (r.X)) +200))
+                                             filter(data.set.name ==
+                                                      as.character(list.of.data.sets5()[input$num51,]),
+                                                    duration.filter) %>% "$"(r.X)) + 200))
 
     })
 
 
     output$plot54 <- renderPlot({
 
-      # rv$filtered.added.data %>%
-      #   filter(trajectory.unique.id == as.character(list.of.trajs5()[input$num52,])) %>%
-      #   ggplot()+
-      #   geom_point(aes(x = r.Y, y= frame.number , size = intensity)) +
-      #   ggtitle(paste ("Trajectory id: ", as.character(list.of.trajs5()[input$num52,]), sep = " ")) +
-      #   geom_path(aes(x = r.Y, y= frame.number))  +
-      #   xlim(c(min(rv$filtered.added.data %>%
-      #                filter(data.set.name == as.character(list.of.data.sets5()[input$num51,]),
-      #                       visual.inspection, duration.filter) %>% "$" (r.Y)) -200,
-      #          max(rv$filtered.added.data %>%
-      #                filter(data.set.name == as.character(list.of.data.sets5()[input$num51,]),
-      #                       visual.inspection, duration.filter) %>% "$" (r.Y)) +200))
+
 
       rv$filtered.added.data %>%
         filter(trajectory.unique.id == as.character(list.of.trajs5()[input$num52,])) %>%
-        ggplot()+
-        geom_point(aes(x = r.Y, y= frame.number , size = intensity)) +
-        ggtitle(paste ("Rotated Y---Trajectory id: ", as.character(list.of.trajs5()[input$num52,]), sep = " ")) +
-        geom_path(aes(x = r.Y, y= frame.number))  +
+        ggplot() +
+        geom_point(aes(x = r.Y, y = frame.number , size = intensity)) +
+        ggtitle(paste("Rotated Y---Trajectory id: ",
+                       as.character(list.of.trajs5()[input$num52,]), sep = " ")) +
+        geom_path(aes(x = r.Y, y = frame.number))  +
         scale_x_continuous(limits = c(min(rv$filtered.added.data %>%
-                                            filter(data.set.name == as.character(list.of.data.sets5()[input$num51,]),
-                                                   visual.inspection, duration.filter) %>% "$" (r.Y)) -200,
+                                            filter(data.set.name ==
+                                                     as.character(list.of.data.sets5()[input$num51,]),
+                                                   visual.inspection, duration.filter) %>%
+                                            "$"(r.Y)) - 200,
                                       max(rv$filtered.added.data %>%
-                                            filter(data.set.name == as.character(list.of.data.sets5()[input$num51,]),
-                                                   visual.inspection, duration.filter) %>% "$" (r.Y)) +200))
+                                            filter(data.set.name ==
+                                                     as.character(list.of.data.sets5()[input$num51,]),
+                                                   visual.inspection, duration.filter) %>%
+                                            "$"(r.Y)) + 200))
 
     })
 
@@ -812,40 +744,29 @@ app_server <- function(input, output, session) {
     req(input$file6)
     readRDS(input$file6$datapath)})
 
-  #data.collect <- NULL
+
 
   observeEvent(input$add6, {
 
     rv$data.collect <- bind_rows(rv$data.collect, analysed.data() %>%
                                    mutate(trajectory.unique.id = paste(trajectory.unique.id,
                                                                        analysis.id, sep = "-"),
-                                          NA.condition= "expr.cond.NA")) %>% distinct()
+                                          NA.condition = "expr.cond.NA")) %>% distinct()
 
     #show.data6 <<-  rv$data.collect
 
     rv$protein.list <- rv$data.collect %>% "$"(protein) %>% unique()
 
-    # output$datasets <- renderText(rv$data.collect %>% filter(protein %in% input$inCheckboxGroup,
-    #                                                          detected.data == "Noise excluded") %>%
-    #                                 select(data.set.name) %>% unique() %>% nrow()%>% as.numeric())
 
-    output$datasets <- renderDataTable(rv$data.collect %>% filter(protein %in% input$inCheckboxGroup,
-                                                                  detected.data == "Noise-excluded data") %>%
-                                         group_by(protein, across(all_of(input$in.select)))%>%
+    output$datasets <- renderDataTable(rv$data.collect %>%
+                                         filter(protein %in% input$inCheckboxGroup,
+                                                                  detected.data ==
+                                                                    "Noise-excluded data") %>%
+                                         group_by(protein, across(all_of(input$in.select))) %>%
                                          summarise(data.sets = length(unique(data.set.name)),
-                                                   trajectories = length(unique(trajectory.unique.id)),
+                                                   trajectories =
+                                                     length(unique(trajectory.unique.id)),
                                                    frames = n()))
-
-    #
-    # output$trajectories <- renderText(rv$data.collect %>%filter(protein %in% input$inCheckboxGroup,
-    #                                                             detected.data == "Noise-excluded data") %>%
-    #                                   select(trajectory.unique.id) %>%
-    #                                     unique() %>% nrow()%>% as.numeric())
-    # output$frames <- renderText(rv$data.collect %>% filter(protein %in% input$inCheckboxGroup,
-    #                                                        detected.data == "Noise-excluded data") %>%
-    #                                     group_by(trajectory.unique.id) %>%
-    #                                     summarise(frames = length(frame.number)) %>%
-    #                                     summarise(sum(frames)) %>% as.numeric())
 
 
     updateCheckboxGroupInput(session, "inCheckboxGroup",
@@ -907,12 +828,12 @@ app_server <- function(input, output, session) {
       rv$data.collect %>% filter(protein %in% input$inCheckboxGroup0,
                                  detected.data == "Noise-excluded data") %>%
         group_by(trajectory.unique.id) %>%
-        mutate(step.per.f=abs(lead(r.X, n=1)- r.X)/frame.interval) %>%
+        mutate(step.per.f = abs(lead(r.X, n = 1) - r.X)/frame.interval) %>%
         group_by(protein, across(all_of(input$in.select0))) %>%
-        summarise(ave.displacement.per.ms = mean(step.per.f, na.rm= TRUE)) %>%
-        ggplot()+
-        geom_point(aes(x = protein, y= ave.displacement.per.ms,
-                       color=as.factor(eval(as.name(input$in.select0)))), size=5) +
+        summarise(ave.displacement.per.ms = mean(step.per.f, na.rm = TRUE)) %>%
+        ggplot() +
+        geom_point(aes(x = protein, y = ave.displacement.per.ms,
+                       color = as.factor(eval(as.name(input$in.select0)))), size = 5) +
         ggtitle("Average scanning speed") +
         xlab("Protein") +
         ylab("Scanning speed (nm/ms)") +
@@ -935,14 +856,14 @@ app_server <- function(input, output, session) {
       rv$data.collect %>% filter(protein %in% input$inCheckboxGroup0,
                                  detected.data == "Noise-excluded data") %>%
         group_by(trajectory.unique.id) %>%
-        mutate(step.per.f=abs(lead(r.X, n=1)- r.X)/frame.interval) %>%
+        mutate(step.per.f = abs(lead(r.X, n = 1) - r.X)/frame.interval) %>%
         group_by(protein, trajectory.unique.id, across(all_of(input$in.select0))) %>%
-        summarise(displacement.per.ms = mean(step.per.f, na.rm =T)) %>%
-        ggplot()+
+        summarise(displacement.per.ms = mean(step.per.f, na.rm = T)) %>%
+        ggplot() +
         geom_histogram(aes(x = displacement.per.ms,
                            fill = as.factor(eval(as.name(input$in.select0)))),
                        bins = 30) +
-        facet_wrap(~protein, scales = "free")+
+        facet_wrap(~protein, scales = "free") +
         ggtitle("Distribution of average scanning speed of trajectories") +
         xlab("Scanning speed (nm/ms)") +
         ylab("Counts (trajectories)") +
@@ -964,12 +885,12 @@ app_server <- function(input, output, session) {
       rv$data.collect %>% filter(protein %in% input$inCheckboxGroup0,
                                  detected.data == "Noise-excluded data") %>%
         group_by(trajectory.unique.id) %>%
-        mutate(displacement.per.ms=(lead(r.X, n=1)- r.X)/frame.interval) %>%
-        ggplot()+
+        mutate(displacement.per.ms = (lead(r.X, n = 1) - r.X)/frame.interval) %>%
+        ggplot() +
         geom_histogram(aes(x = displacement.per.ms,
-                           fill =as.factor(eval(as.name(input$in.select0)))),
+                           fill = as.factor(eval(as.name(input$in.select0)))),
                        bins = 30, na.rm = TRUE) +
-        facet_wrap(~protein, scales = "free")+
+        facet_wrap(~protein, scales = "free") +
         ggtitle("Distribution of instantaneous scanning speed") +
         xlab("Scanning speed (nm/ms)") +
         ylab("Counts (frames)") +
@@ -999,12 +920,12 @@ app_server <- function(input, output, session) {
                                  detected.data == "Noise-excluded data") %>%
         group_by(protein, trajectory.unique.id, across(all_of(input$in.select1))) %>%
         summarise(binding.lifetime =
-                    mean((max(frame.number) - min(frame.number))* unique(frame.interval)/1000)) %>%
+                    mean((max(frame.number) - min(frame.number)) * unique(frame.interval)/1000)) %>%
         group_by(protein, across(all_of(input$in.select1))) %>%
         summarise(ave.binding.lifetime = mean(binding.lifetime)) %>%
-        ggplot()+
-        geom_point(aes(x =protein,  y= ave.binding.lifetime,
-                       color = as.factor(eval(as.name(input$in.select1)))), size =5) +
+        ggplot() +
+        geom_point(aes(x = protein,  y = ave.binding.lifetime,
+                       color = as.factor(eval(as.name(input$in.select1)))), size = 5) +
         ggtitle("Average binding life time") +
         xlab("Protein") +
         ylab("Binding lifetime (s)") +
@@ -1029,15 +950,15 @@ app_server <- function(input, output, session) {
       rv$data.collect %>% filter(protein %in% input$inCheckboxGroup1,
                                  detected.data == "Noise-excluded data") %>%
         group_by(trajectory.unique.id) %>%
-        mutate(step=lead(r.X, n=1)- r.X) %>%
+        mutate(step = lead(r.X, n = 1) - r.X) %>%
         group_by(protein, trajectory.unique.id, across(all_of(input$in.select1))) %>%
         summarise(binding.lifetime =
-                    mean((max(frame.number) - min(frame.number))* unique(frame.interval)/1000)) %>%
-        ggplot()+
+                    mean((max(frame.number) - min(frame.number)) * unique(frame.interval)/1000)) %>%
+        ggplot() +
         geom_histogram(aes(x = binding.lifetime,
                            fill = as.factor(eval(as.name(input$in.select1)))),
                        bins = 30) +
-        facet_wrap(~protein, scales = "free")+
+        facet_wrap(~protein, scales = "free") +
         ggtitle("Distribution of binding life time of trajectories") +
         xlab("Binding life time (s)") +
         ylab("Counts (trajectories)") +
@@ -1067,10 +988,10 @@ app_server <- function(input, output, session) {
       rv$data.collect %>% filter(protein %in% input$inCheckboxGroup2,
                                  detected.data == "Noise-excluded data") %>%
         group_by(protein, trajectory.unique.id, across(all_of(input$in.select2))) %>%
-        summarise(scanning.coverage = mean((max(r.X)- min(r.X)))) %>%
+        summarise(scanning.coverage = mean((max(r.X) - min(r.X)))) %>%
         group_by(protein, across(all_of(input$in.select2))) %>%
         summarise(ave.scanning.coverage = mean(scanning.coverage)) %>%
-        ggplot()+
+        ggplot() +
         geom_point(aes(x = protein, y = ave.scanning.coverage,
                        color = as.factor(eval(as.name(input$in.select2)))), size = 5) +
         ggtitle("Average scanning coverage") +
@@ -1095,14 +1016,14 @@ app_server <- function(input, output, session) {
       rv$data.collect %>% filter(protein %in% input$inCheckboxGroup2,
                                  detected.data == "Noise-excluded data") %>%
         group_by(trajectory.unique.id) %>%
-        mutate(step=lead(r.X, n=1)- r.X) %>%
+        mutate(step = lead(r.X, n = 1) - r.X) %>%
         group_by(protein, trajectory.unique.id, across(all_of(input$in.select2))) %>%
-        summarise(scanning.coverage = mean((max(r.X)- min(r.X))/0.34)) %>%
-        ggplot()+
+        summarise(scanning.coverage = mean((max(r.X) - min(r.X))/0.34)) %>%
+        ggplot() +
         geom_histogram(aes(x = scanning.coverage,
                            fill = as.factor(eval(as.name(input$in.select2)))),
                        bins = 30) +
-        facet_wrap(~protein, scales = "free")+
+        facet_wrap(~protein, scales = "free") +
         ggtitle("Distribution of scanning coverage") +
         xlab("Scanning  coverage (nm)") +
         ylab("Counts (trajectories)") +
@@ -1129,14 +1050,14 @@ app_server <- function(input, output, session) {
       rv$data.collect %>% filter(protein %in% input$inCheckboxGroup3,
                                  detected.data == "Noise-excluded data") %>%
         group_by(trajectory.unique.id) %>%
-        mutate(step=lead(r.X, n=1)- r.X) %>%
+        mutate(step = lead(r.X, n = 1) - r.X) %>%
         group_by(protein, trajectory.unique.id, across(all_of(input$in.select3))) %>%
         summarise(bases.checked = max(cumsum(abs(step)), na.rm = T)) %>%
         group_by(protein, across(all_of(input$in.select3))) %>%
         summarise(ave.bases.checked = mean(bases.checked)) %>%
-        ggplot()+
-        geom_point(aes(x = protein , y= ave.bases.checked,
-                       color = as.factor(eval(as.name(input$in.select3)))), size = 5)+
+        ggplot() +
+        geom_point(aes(x = protein , y = ave.bases.checked,
+                       color = as.factor(eval(as.name(input$in.select3)))), size = 5) +
         ggtitle("Average accumulative scanning length") +
         xlab("Protein") +
         ylab("Accumulative scanning length (nm)") +
@@ -1160,10 +1081,10 @@ app_server <- function(input, output, session) {
       rv$data.collect %>% filter(protein %in% input$inCheckboxGroup3,
                                  detected.data == "Noise-excluded data") %>%
         group_by(trajectory.unique.id) %>%
-        mutate(step=lead(r.X, n=1)- r.X) %>%
+        mutate(step = lead(r.X, n = 1) - r.X) %>%
         group_by(protein, trajectory.unique.id, across(all_of(input$in.select3))) %>%
         summarise(bases.checked = max(cumsum(abs(step)), na.rm = T)/0.34) %>%
-        ggplot()+
+        ggplot() +
         geom_histogram(aes(x = bases.checked,
                            fill = as.factor(eval(as.name(input$in.select3)))),
                        bins = 30) +
@@ -1196,25 +1117,25 @@ app_server <- function(input, output, session) {
         filter(protein %in% input$inCheckboxGroup4,
                detected.data == "Noise-excluded data") %>%
         group_by(trajectory.unique.id) %>%
-        mutate(duration = (max(frame.number)-min(frame.number))*frame.interval,
-               speed = (lead(r.X, n=1)- r.X)/frame.interval,
-               walked.length = mean(abs(speed), na.rm = T) *duration,
-               covered.length = max(r.X)-min(r.X),
+        mutate(duration = (max(frame.number) - min(frame.number)) * frame.interval,
+               speed = (lead(r.X, n = 1) - r.X)/frame.interval,
+               walked.length = mean(abs(speed), na.rm = T) * duration,
+               covered.length = max(r.X) - min(r.X),
                walking.speed = mean(abs(speed), na.rm = T),
-               covering.speed = (max(r.X)-min(r.X))/duration,
+               covering.speed = (max(r.X) - min(r.X)) / duration,
                redudancy = walked.length/covered.length) %>%
         group_by(protein, across(all_of(input$in.select4))) %>%
         summarise(ave.redundancy = mean(redudancy, na.rm = T),
                   ave.efficiency = mean(covering.speed, na.rm = T)) %>%
-        ggplot()+
+        ggplot() +
         geom_point(aes(x = ave.efficiency,
                        y = ave.redundancy,
-                       color =protein ,
-                       shape = as.factor(eval(as.name(input$in.select4)))), size = 5)+
-        ggtitle("Average redundancy-efficiency")+
+                       color = protein ,
+                       shape = as.factor(eval(as.name(input$in.select4)))), size = 5) +
+        ggtitle("Average redundancy-efficiency") +
         ylab("Redundancy") +
-        xlab("Efficiency (nm/ms)")+
-        scale_color_discrete(name = "Protein")+
+        xlab("Efficiency (nm/ms)") +
+        scale_color_discrete(name = "Protein") +
         scale_shape_discrete(name = "Experimental condition")
 
     })
@@ -1236,20 +1157,20 @@ app_server <- function(input, output, session) {
         filter(protein %in% input$inCheckboxGroup4,
                detected.data == "Noise-excluded data") %>%
         group_by(trajectory.unique.id) %>%
-        mutate(duration = (max(frame.number)-min(frame.number))*frame.interval,
-               speed = (lead(r.X, n=1)- r.X)/frame.interval,
-               walked.length = mean(abs(speed), na.rm = T) *duration,
-               covered.length = max(r.X)-min(r.X),
+        mutate(duration = (max(frame.number) - min(frame.number))*frame.interval,
+               speed = (lead(r.X, n = 1) - r.X) / frame.interval,
+               walked.length = mean(abs(speed), na.rm = T) * duration,
+               covered.length = max(r.X) - min(r.X),
                walking.speed = mean(abs(speed), na.rm = T),
-               covering.speed = (max(r.X)-min(r.X))/duration,
+               covering.speed = (max(r.X) - min(r.X))/duration,
                redundancy = walked.length/covered.length) %>%
-        ggplot()+
+        ggplot() +
         geom_point(aes(x = covering.speed,
                        y = redundancy,
-                       color = as.factor(eval(as.name(input$in.select4)))), size = 0.1)+
-        ggtitle("Distribution of redundancy-efficiency for trajectories")+
+                       color = as.factor(eval(as.name(input$in.select4)))), size = 0.1) +
+        ggtitle("Distribution of redundancy-efficiency for trajectories") +
         ylab("Redundancy") +
-        xlab("Efficiency (nm/ms)")+
+        xlab("Efficiency (nm/ms)") +
         scale_color_discrete(name = "Experimental condition")
 
     })
@@ -1270,20 +1191,20 @@ app_server <- function(input, output, session) {
         filter(protein %in% input$inCheckboxGroup4,
                detected.data == "Noise-excluded data") %>%
         group_by(trajectory.unique.id) %>%
-        mutate(duration = (max(frame.number)-min(frame.number))*frame.interval,
-               speed = (lead(r.X, n=1)- r.X)/frame.interval,
-               walked.length = mean(abs(speed), na.rm = T) *duration,
-               covered.length = max(r.X)-min(r.X),
+        mutate(duration = (max(frame.number) - min(frame.number))*frame.interval,
+               speed = (lead(r.X, n = 1) - r.X)/frame.interval,
+               walked.length = mean(abs(speed), na.rm = T) * duration,
+               covered.length = max(r.X) - min(r.X),
                walking.speed = mean(abs(speed), na.rm = T),
-               covering.speed = (max(r.X)-min(r.X))/duration,
+               covering.speed = (max(r.X) - min(r.X))/duration,
                redundancy = walked.length/covered.length) %>%
-        ggplot()+
+        ggplot() +
         geom_point(aes(x = covering.speed,
                        y = redundancy,
-                       color = protein), size = 0.1)+
-        ggtitle("Distribution of redundancy-efficiency for trajectories")+
+                       color = protein), size = 0.1) +
+        ggtitle("Distribution of redundancy-efficiency for trajectories") +
         ylab("Redundancy") +
-        xlab("Efficiency (nm/ms)")+
+        xlab("Efficiency (nm/ms)") +
         scale_color_discrete(name = "Protein")
 
     })
@@ -1310,20 +1231,20 @@ app_server <- function(input, output, session) {
         filter(protein %in% input$inCheckboxGroup5,
                detected.data == "Noise-excluded data") %>%
         group_by(protein, trajectory.unique.id) %>%
-        mutate(time=frame.number-min(frame.number)) %>%
+        mutate(time = frame.number - min(frame.number)) %>%
         arrange(time) %>%
-        mutate(local.msd.05 = localMSDcomplete(r.X, 5)/ (2000*frame.interval),
-               local.msd.07 = localMSDcomplete(r.X, 7)/ (2000*frame.interval),
-               local.msd.10 = localMSDcomplete(r.X, 10)/ (2000*frame.interval),
-               local.msd.15 = localMSDcomplete(r.X, 15)/ (2000*frame.interval)) %>%
-        filter(local.msd.05!=0) %>%
+        mutate(local.msd.05 = localMSDcomplete(r.X, 5) / (2000*frame.interval),
+               local.msd.07 = localMSDcomplete(r.X, 7) / (2000*frame.interval),
+               local.msd.10 = localMSDcomplete(r.X, 10) / (2000*frame.interval),
+               local.msd.15 = localMSDcomplete(r.X, 15) / (2000*frame.interval)) %>%
+        filter(local.msd.05 != 0) %>%
         group_by(protein, across(all_of(input$in.select5))) %>%
         summarise(ave.diffusion.rate = mean(local.msd.05)) %>%
-        ggplot() + geom_point(aes(x= protein, y = ave.diffusion.rate,
-                                  color = as.factor(eval(as.name(input$in.select5)))),size = 5)+
-        ggtitle("Average diffusion rate")+
-        xlab("Protein")+
-        ylab(expression(Average~diffusion~rate~(mu*m^2/s)))+
+        ggplot() + geom_point(aes(x = protein, y = ave.diffusion.rate,
+                                  color = as.factor(eval(as.name(input$in.select5)))),size = 5) +
+        ggtitle("Average diffusion rate") +
+        xlab("Protein") +
+        ylab(expression(Average~diffusion~rate~(mu*m^2/s))) +
         scale_color_discrete(name = "Experimental condition")
 
     })
@@ -1345,29 +1266,29 @@ app_server <- function(input, output, session) {
         filter(protein %in% input$inCheckboxGroup5,
                detected.data == "Noise-excluded data") %>%
         group_by(protein, trajectory.unique.id) %>%
-        mutate(time=frame.number-min(frame.number)) %>%
+        mutate(time = frame.number - min(frame.number)) %>%
         arrange(time) %>%
-        mutate(local.msd.05 = localMSDcomplete(r.X, 5)/ (2000*frame.interval),
-               local.msd.07 = localMSDcomplete(r.X, 7)/ (2000*frame.interval),
-               local.msd.10 = localMSDcomplete(r.X, 10)/ (2000*frame.interval),
-               local.msd.15 = localMSDcomplete(r.X, 15)/ (2000*frame.interval)) %>%
-        filter(local.msd.05!=0) %>%
+        mutate(local.msd.05 = localMSDcomplete(r.X, 5) / (2000*frame.interval),
+               local.msd.07 = localMSDcomplete(r.X, 7) / (2000*frame.interval),
+               local.msd.10 = localMSDcomplete(r.X, 10) / (2000*frame.interval),
+               local.msd.15 = localMSDcomplete(r.X, 15) / (2000*frame.interval)) %>%
+        filter(local.msd.05 != 0) %>%
         group_by(protein, across(all_of(input$in.select5))) %>%
-        ggplot(aes(x=local.msd.05)) +
+        ggplot(aes(x = local.msd.05)) +
         facet_wrap(~protein, ncol = 3) +
-        geom_histogram(bins=65, position = "stack",
-                       aes(y=(after_stat(count))/tapply(after_stat(count),
+        geom_histogram(bins = 65, position = "stack",
+                       aes(y = (after_stat(count)) / tapply(after_stat(count),
                                                         after_stat(PANEL),sum)[after_stat(PANEL)],
                            fill = as.factor(eval(as.name(input$in.select5))))) +
-        scale_x_log10(breaks= c(0.01,0.1,1,10))+
-        scale_y_continuous(breaks = c(0.025,0.05,0.075))+
-        annotation_logticks(side= "b",
+        scale_x_log10(breaks = c(0.01,0.1,1,10)) +
+        scale_y_continuous(breaks = c(0.025,0.05,0.075)) +
+        annotation_logticks(side = "b",
                             short = unit(0.3,"mm"),
                             mid = unit(0.6,"mm"),
                             long = unit(1,"mm")) +
         ggtitle("Distribution of instantaneous diffusion rate") +
-        xlab(expression(Instantaneous~diffusion~rate~(mu*m^2/s)))+
-        ylab("Fractions")+
+        xlab(expression(Instantaneous~diffusion~rate~(mu*m^2/s))) +
+        ylab("Fractions") +
         scale_fill_discrete(name = "Experimental condition")
 
     })
@@ -1388,24 +1309,24 @@ app_server <- function(input, output, session) {
         filter(protein %in% input$inCheckboxGroup5,
                detected.data == "Noise-excluded data") %>%
         group_by(protein, trajectory.unique.id) %>%
-        mutate(time=frame.number-min(frame.number)) %>%
+        mutate(time = frame.number - min(frame.number)) %>%
         arrange(time) %>%
-        mutate(local.msd.05 = localMSDcomplete(r.X, 5)/ (2000*frame.interval),
-               local.msd.07 = localMSDcomplete(r.X, 7)/ (2000*frame.interval),
-               local.msd.10 = localMSDcomplete(r.X, 10)/ (2000*frame.interval),
-               local.msd.15 = localMSDcomplete(r.X, 15)/ (2000*frame.interval)) %>%
-        filter(local.msd.05!=0) %>%
+        mutate(local.msd.05 = localMSDcomplete(r.X, 5) / (2000*frame.interval),
+               local.msd.07 = localMSDcomplete(r.X, 7) / (2000*frame.interval),
+               local.msd.10 = localMSDcomplete(r.X, 10) / (2000*frame.interval),
+               local.msd.15 = localMSDcomplete(r.X, 15) / (2000*frame.interval)) %>%
+        filter(local.msd.05 != 0) %>%
         group_by(protein, across(all_of(input$in.select5))) %>%
-        ggplot(aes(x=local.msd.05, color = protein)) +
-        geom_density(size=3) +
-        scale_x_log10(breaks= c(0.01,0.1,1,10))+
-        annotation_logticks(side= "b",
+        ggplot(aes(x = local.msd.05, color = protein)) +
+        geom_density(size = 3) +
+        scale_x_log10(breaks = c(0.01,0.1,1,10)) +
+        annotation_logticks(side = "b",
                             short = unit(0.3,"mm"),
                             mid = unit(0.6,"mm"),
                             long = unit(1,"mm")) +
-        ggtitle("Distribution of instantaneous diffusion rate")+
-        xlab(expression(Instantaneous~diffusion~rate~(mu*m^2/s)))+
-        ylab("Density")+
+        ggtitle("Distribution of instantaneous diffusion rate") +
+        xlab(expression(Instantaneous~diffusion~rate~(mu*m^2/s))) +
+        ylab("Density") +
         scale_fill_discrete(name = "Protein")
 
     })

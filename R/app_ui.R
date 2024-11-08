@@ -15,18 +15,18 @@ app_ui <- function(request) {
                  fluidRow(
                    column(2,
                           wellPanel(
-                            h5(strong("Navigate to the location of json files (outputs of localization
-                                                analysis in ThunderSTORM")),
+                            h5(strong("Navigate to the location of json files (outputs of
+                                      localization analysis in ThunderSTORM")),
                             br(),
                             h5("Dataset names should follow a common style carrying
                                       relevant information for each dataset"),
                             br(),
                             shinyDirButton(id = "folder",label = "Select input folder",
-                                           title = "Navigate to the directory of json files produced as a
-                                                result of localization analysis in ThunderSTORM" ),
+                                           title = "Navigate to the directory of json
+                                           files produced as a result of localization
+                                           analysis in ThunderSTORM" ),
                             br(),
                             br(),
-
                             textInput("sep", "_", label = "Separator of the dataset name parts"),
 
                             selectInput("checkGroup1",
@@ -40,7 +40,6 @@ app_ui <- function(request) {
                             br(),
                             textInput("analysis.id", "Unique analysis ID"),
                             actionButton(inputId = "load", label = "Load and transform data"),
-
                             br(),
                             br(),
                             br(),
@@ -119,11 +118,11 @@ app_ui <- function(request) {
                                            "expr.cond5"))),
                    column(10,
                           h5(strong("Number of datasets:")),
-                          verbatimTextOutput ("summary1.1"),
+                          verbatimTextOutput("summary1.1"),
                           h5(strong("Number of frames:")),
-                          verbatimTextOutput ("summary1.2"),
+                          verbatimTextOutput("summary1.2"),
                           h5(strong("Number of observations:")),
-                          verbatimTextOutput ("summary1.3"),
+                          verbatimTextOutput("summary1.3"),
                           h5(strong("Detail of datasets:")),
                           dataTableOutput("summary1.4"))
                  )),
@@ -169,7 +168,8 @@ app_ui <- function(request) {
                             actionButton(inputId = "intensity", label = "Intensity distribution"),
                             br(),
                             br(),
-                            h5(strong("Select an approximate range for intensity; exclude the extreme values")),
+                            h5(strong("Select an approximate range for intensity; exclude
+                                      the extreme values")),
                             numericInput("min.intensity",
                                          "Min intensity",
                                          value = 1),
@@ -177,7 +177,8 @@ app_ui <- function(request) {
                                          "Max intensity",
                                          value = 10000)),
                           wellPanel(
-                          h5("Here is the directory where the output will be stored (can be changed in the first tab):"),
+                          h5("Here is the directory where the output will be stored (can be
+                             changed in the first tab):"),
                           br(),
                           verbatimTextOutput("folder.path.output2"),
                           actionButton(inputId = "done", label = "Save"),
@@ -205,12 +206,15 @@ app_ui <- function(request) {
         tabPanel(title = "Trajectory detection",
                  fluidRow(
                    column(2,
-                          wellPanel(fileInput("file2", label = "File input from tab2", accept = ".rds"),
+                          wellPanel(fileInput("file2", label = "File input from tab2",
+                                              accept = ".rds"),
                                     numericInput("max.dx",
-                                                 label = "Max frame-to-frame displacement along substrate",
+                                                 label = "Max frame-to-frame displacement
+                                                 along substrate",
                                                  value = 360),
                                     numericInput("max.dy",
-                                                 label = "Max frame-to-frame displacement across Substrate",
+                                                 label = "Max frame-to-frame displacement
+                                                 across Substrate",
                                                  value = 240),
                                     numericInput("max.dx.2",
                                                  label = "Localization precision",
@@ -250,7 +254,8 @@ app_ui <- function(request) {
                                     numericInput("num2", label = "Select the data set", value = 1,
                                                  min = 1)),
                           wellPanel(br(),
-                                    h5("Here is the directory where the output will be stored (can be changed in the first tab):"),
+                                    h5("Here is the directory where the output will be stored
+                                       (can be changed in the first tab):"),
                                     br(),
                                     verbatimTextOutput("folder.path.output3"),
                                     actionButton(inputId = "save2", label = "Save"),
@@ -297,7 +302,8 @@ app_ui <- function(request) {
                             br(),
                             br(),
                             br(),
-                            h5("Here is the directory where the output will be stored (can be changed in the first tab):"),
+                            h5("Here is the directory where the output will be stored (can be
+                               changed in the first tab):"),
                             br(),
                             verbatimTextOutput("folder.path.output4"),
                             actionButton(inputId = "save4", label = "Save"),
@@ -319,11 +325,16 @@ app_ui <- function(request) {
                             fileInput("file52", label = "File input from tab 4", accept = ".rds"),
                             actionButton(inputId = "noise.filters", label = "Exclude noise"),
                             checkboxGroupInput("checkGroup", h3("Detected data"),
-                                               choices = list("Noise-excluded data" = "Noise-excluded data",
-                                                              "Surface-bound emitters" = "Surface-bound emitters",
-                                                              "Non-linear movements" = "Non-linear movements",
-                                                              "High/low intensity noise" = "High/low intensity noise",
-                                                              "Short-lived noise" = "Short-lived noise"),
+                                               choices = list("Noise-excluded data" =
+                                                                "Noise-excluded data",
+                                                              "Surface-bound emitters" =
+                                                                "Surface-bound emitters",
+                                                              "Non-linear movements" =
+                                                                "Non-linear movements",
+                                                              "High/low intensity noise" =
+                                                                "High/low intensity noise",
+                                                              "Short-lived noise" =
+                                                                "Short-lived noise"),
                                                selected = "Noise-excluded data"),
                             sliderInput("stuck.gauge", "Surface-bound filter gauge",
                                         min = 0, max = 10,
@@ -341,12 +352,14 @@ app_ui <- function(request) {
                             actionButton(inputId = "do.it5", label = "Visualize"),
                             br(),
                             br(),
-                            numericInput("num52", label = "Select the trajectory id", value = 1, min = 1),
+                            numericInput("num52", label = "Select the trajectory id",
+                                         value = 1, min = 1),
                             br(),
                             br()
                           ),
                           wellPanel(
-                            h5("Here is the directory where the output will be stored (can be changed in the first tab):"),
+                            h5("Here is the directory where the output will be stored (can be
+                               changed in the first tab):"),
                             br(),
                             verbatimTextOutput("folder.path.output5"),
                             actionButton(inputId = "save5", label = "Save"),
@@ -375,14 +388,9 @@ app_ui <- function(request) {
                           )),
                    column(10,
                           h5(strong("Overview of the analysed data")),
-                          dataTableOutput ("datasets"),
+                          dataTableOutput("datasets"),
                           br(),
                           br()
-                          # h5(strong("Number of trajectories:")),
-                          # verbatimTextOutput ("trajectories"),
-                          # br(),
-                          # h5(strong("Number of frames:")),
-                          # verbatimTextOutput ("frames"),
                    )),
                  h5(strong("Visualization of analysis outputs")),
                  column(12,

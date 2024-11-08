@@ -1,6 +1,6 @@
 <!-- badges: start -->
 
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 
 <!-- badges: end -->
 
@@ -62,14 +62,14 @@ docker build -f Dockerfile --progress=plain -t smitracker:latest .
 4. **Run the Docker container: **:
 
 ```sh
-docker run --rm -p 2030:80 --mount type=bind,source=<directory_in_the_local_computer>,target=/home smitracker:latest
+docker run --rm -p 80:80 --mount type=bind,source=<directory_in_the_local_computer>,target=/home smitracker:latest
 ```
 
 Replace `<directory_in_the_local_computer>` with the actual path to the directory you want to mount; this directory should contain your data. 
 
 5. **Open the interface inside a browser and analyze the data**
 ```link
-http://localhost:2030/ 
+127.0.0.1:80 or localhost 
 ```
 
 
