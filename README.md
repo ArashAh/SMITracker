@@ -59,7 +59,7 @@ docker build -f Dockerfile_base --progress=plain -t smitracker_base .
 docker build -f Dockerfile --progress=plain -t smitracker:latest .
 ```
 
-4. **Run the Docker container: **:
+4. **Run the Docker container: **
 
 ```sh
 docker run --rm -p 80:80 --mount type=bind,source=<directory_in_the_local_computer>,target=/home smitracker:latest
@@ -74,6 +74,8 @@ Replace `<directory_in_the_local_computer>` with the actual path to the director
 
 
 #### Stopping the Docker Container from Running
+
+Either use the Docker Desktop interface or the following in instruction:
 
 1. **List running Docker containers**:
 

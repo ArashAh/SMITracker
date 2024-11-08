@@ -798,25 +798,25 @@ app_server <- function(input, output, session) {
     rv$conditions.list <- c("NA.condition", rv$conditions.list)
 
     updateSelectInput(session, "in.select",
-                      label = "Exprimental conditions",
+                      label = "Exprimental condition",
                       choices = rv$conditions.list)
     updateSelectInput(session, "in.select0",
-                      label = "Exprimental conditions",
+                      label = "Exprimental condition",
                       choices = rv$conditions.list)
     updateSelectInput(session, "in.select1",
-                      label = "Exprimental conditions",
+                      label = "Exprimental condition",
                       choices = rv$conditions.list)
     updateSelectInput(session, "in.select2",
-                      label = "Exprimental conditions",
+                      label = "Exprimental condition",
                       choices = rv$conditions.list)
     updateSelectInput(session, "in.select3",
-                      label = "Exprimental conditions",
+                      label = "Exprimental condition",
                       choices = rv$conditions.list)
     updateSelectInput(session, "in.select4",
-                      label = "Exprimental conditions",
+                      label = "Exprimental condition",
                       choices = rv$conditions.list)
     updateSelectInput(session, "in.select5",
-                      label = "Exprimental conditions",
+                      label = "Exprimental condition",
                       choices = rv$conditions.list)
 
 

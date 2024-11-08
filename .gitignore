@@ -5,3 +5,5 @@
 .DS_Store
 .quarto
 .here
+deploy/README
+local_dev/
