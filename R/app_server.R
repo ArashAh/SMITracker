@@ -73,30 +73,40 @@ app_server <- function(input, output, session) {
     })
   })
 
-  shinyDirChoose(input,'folder2', roots = roots, filetypes = c('','json'))
+ # shinyDirChoose(input,'folder2', roots = roots, filetypes = c('','rds'))
 
 
-   folder.path2 <- reactive({req(input$folder2)
-     as.character(parseDirPath(roots, input$folder2))})
+  # folder.path2 <- reactive({req(input$folder2)
+   #  as.character(parseDirPath(roots, input$folder2))})
 
-     output$folder.path.output <-
-       output$folder.path.output2 <-
-       output$folder.path.output3 <-
-       output$folder.path.output4 <-
-       output$folder.path.output5 <- renderText({
-         req(input$folder2)
-         folder.path2()
-     }
-     )
-  observeEvent(input$save,{
+     # output$folder.path.output <-
+     #   output$folder.path.output2 <-
+     #   output$folder.path.output3 <-
+     #   output$folder.path.output4 <-
+     #   output$folder.path.output5 <- renderText({
+     #     req(input$folder2)
+     #     folder.path2()
+     #}
+     #)
 
-
-    saveRDS(rv$collect.data, paste(folder.path2(),"/", "1_data_transformed_",
-                                   rv$collect.data$analysis.id %>% unique(), "_",
-                                   as.character(Sys.Date()), ".rds", sep = ""))
+  #observeEvent(input$save,{
 
 
-  })
+    # saveRDS(rv$collect.data, paste(folder.path2(),"/", "1_data_transformed_",
+    #                                rv$collect.data$analysis.id %>% unique(), "_",
+    #                                as.character(Sys.Date()), ".rds", sep = ""))
+
+    output$downloadData1 <- downloadHandler(
+      filename = function() {
+        paste0("1_data_transformed_", unique(rv$collect.data$analysis.id), "_", Sys.Date(), ".rds")
+      },
+      content = function(file) {
+        saveRDS(rv$collect.data, file)
+      }
+    )
+
+
+#  })
 
 
   ##### tab2 ######
@@ -255,28 +265,38 @@ app_server <- function(input, output, session) {
                                         "stuck" = "Surface bound",
                                         "Before spatial filtering" = "Before spatial filtering"))})
 
-
-  })
-
-
-
-  observeEvent(input$done, {
-
     rv$collect.out.data.to.save <- rv$collect.out.data %>%
       mutate(intensity.filter = ifelse(intensity < input$min.intensity |
                                          intensity > input$max.intensity , FALSE, TRUE )) %>%
       filter(spatial.filter, intensity.filter) %>%
       select(-spatial.filter, -intensity.filter)
 
+  })
+
+
+
+  #observeEvent(input$done, {
+
+
+
     #show.data2 <<-rv$collect.out.data.to.save
 
 
-    saveRDS(rv$collect.out.data.to.save, paste(folder.path2(),"/","2_spatial_filtered_",
-                                               rv$collect.out.data$analysis.id %>% unique(),
-                                               "_", as.character(Sys.Date()), ".rds", sep = ""))
+    output$downloadData2 <- downloadHandler(
+      filename = function() {
+        paste0("2_spatial_filtered_", unique(rv$collect.out.data$analysis.id), "_", Sys.Date(), ".rds")
+      },
+      content = function(file) {
+        saveRDS(rv$collect.out.data.to.save, file)
+      }
+    )
+
+   # saveRDS(rv$collect.out.data.to.save, paste(folder.path2(),"/","2_spatial_filtered_",
+    #                                           rv$collect.out.data$analysis.id %>% unique(),
+     #                                          "_", as.character(Sys.Date()), ".rds", sep = ""))
 
 
-  })
+  #})
 
   ##### tab3 #####
 
@@ -430,14 +450,23 @@ app_server <- function(input, output, session) {
 
 
 
-  observeEvent(input$save2, {
+  #observeEvent(input$save2, {
 
-    saveRDS(rv$collect.detected.data, paste(folder.path2(),"/","3_trajectories_detected_",
-                                            rv$collect.detected.data$analysis.id %>% unique(),
-                                            "_", as.character(Sys.Date()), ".rds", sep = ""))
+    # saveRDS(rv$collect.detected.data, paste(folder.path2(),"/","3_trajectories_detected_",
+    #                                         rv$collect.detected.data$analysis.id %>% unique(),
+    #                                         "_", as.character(Sys.Date()), ".rds", sep = ""))
+
+    output$downloadData3 <- downloadHandler(
+      filename = function() {
+        paste0("3_trajectories_detected_", unique(rv$collect.detected.data$analysis.id), "_", Sys.Date(), ".rds")
+      },
+      content = function(file) {
+        saveRDS(rv$collect.detected.data, file)
+      }
+    )
 
 
-  })
+  #})
 
 
   ##### tab4 #####
@@ -555,13 +584,21 @@ app_server <- function(input, output, session) {
     #show.data4 <<- rv$transformed.data
   })
 
-  observeEvent(input$save4, {
+  #observeEvent(input$save4, {
 
-    saveRDS(rv$transformed.data, paste(folder.path2(),"/","4_visually_inspected_",
-                                       rv$transformed.data$analysis.id %>% unique(),
-                                       "_", as.character(Sys.Date()), ".rds", sep = ""))
-  })
+   # saveRDS(rv$transformed.data, paste(folder.path2(),"/","4_visually_inspected_",
+    #                                   rv$transformed.data$analysis.id %>% unique(),
+     #                                  "_", as.character(Sys.Date()), ".rds", sep = ""))
+  #})
 
+    output$downloadData4 <- downloadHandler(
+      filename = function() {
+        paste0("4_visually_inspected_", unique(rv$transformed.data$analysis.id), "_", Sys.Date(), ".rds")
+      },
+      content = function(file) {
+        saveRDS(rv$transformed.data, file)
+      }
+    )
 
   ##### tab5 #####
 
@@ -731,13 +768,21 @@ app_server <- function(input, output, session) {
 
   })
 
-  observeEvent(input$save5, {
+  # observeEvent(input$save5, {
+  #
+  #   saveRDS(rv$filtered.added.data, paste(folder.path2(),"/","5_noise_excluded_",
+  #                                         rv$filtered.added.data$analysis.id %>% unique(),
+  #                                         "_", as.character(Sys.Date()), ".rds", sep = ""))
+  # })
 
-    saveRDS(rv$filtered.added.data, paste(folder.path2(),"/","5_noise_excluded_",
-                                          rv$filtered.added.data$analysis.id %>% unique(),
-                                          "_", as.character(Sys.Date()), ".rds", sep = ""))
-  })
-
+  output$downloadData5 <- downloadHandler(
+    filename = function() {
+      paste0("5_noise_excluded_", unique(rv$filtered.added.data$analysis.id), "_", Sys.Date(), ".rds")
+    },
+    content = function(file) {
+      saveRDS(rv$filtered.added.data, file)
+    }
+  )
 
   ##### tab6 #####
   analysed.data <- reactive({
@@ -845,12 +890,13 @@ app_server <- function(input, output, session) {
     })
 
 
-    observeEvent( input$save60.2,{
+    output$downloadData60.1 <- downloadHandler(
+      filename = "plot.1.1.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot60.1())$plot$data, file)
+      }
+    )
 
-      write.csv(ggplot_build(plot60.1())$plot$data,
-                paste0(folder.path2(),"/","plot.1.1.data.csv"))
-
-    })
 
     plot60.2 <- reactive({
       rv$data.collect %>% filter(protein %in% input$inCheckboxGroup0,
@@ -874,12 +920,15 @@ app_server <- function(input, output, session) {
       plot60.2()
     })
 
-    observeEvent(input$save60.2,{
 
-      write.csv(ggplot_build(plot60.2())$plot$data,
-                paste0(folder.path2(),"/","plot.1.2.data.csv"))
+    output$downloadData60.2 <- downloadHandler(
+      filename = "plot.1.2.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot60.2())$plot$data, file)
+      }
+    )
 
-    })
+
 
     plot60.3 <- reactive({
       rv$data.collect %>% filter(protein %in% input$inCheckboxGroup0,
@@ -902,12 +951,13 @@ app_server <- function(input, output, session) {
       plot60.3()
     })
 
-    observeEvent(input$save60.3,{
 
-      write.csv(ggplot_build(plot60.3())$plot$data,
-                paste0(folder.path2(),"/","plot.1.3.data.csv"))
-
-    })
+    output$downloadData60.3 <- downloadHandler(
+      filename = "plot.1.3.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot60.3())$plot$data, file)
+      }
+    )
 
   })
 
@@ -937,13 +987,12 @@ app_server <- function(input, output, session) {
       plot61.1()
     })
 
-    observeEvent(input$save61.1,{
-
-      write.csv(ggplot_build(plot61.1())$plot$data,
-                paste0(folder.path2(),"/","plot.2.1.data.csv"))
-
-    })
-
+    output$downloadData61.1 <- downloadHandler(
+      filename = "plot.2.1.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot61.1())$plot$data, file)
+      }
+    )
 
 
     plot61.2 <- reactive({
@@ -970,12 +1019,13 @@ app_server <- function(input, output, session) {
       plot61.2()
     })
 
-    observeEvent(input$save61.2,{
+    output$downloadData61.2 <- downloadHandler(
+      filename = "plot.2.2.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot61.2())$plot$data, file)
+      }
+    )
 
-      write.csv(ggplot_build(plot61.2())$plot$data,
-                paste0(folder.path2(),"/","plot.2.2.data.csv"))
-
-    })
 
 
   })
@@ -1004,12 +1054,12 @@ app_server <- function(input, output, session) {
       plot62.1()
     })
 
-    observeEvent(input$save62.1,{
-
-      write.csv(ggplot_build(plot62.1())$plot$data,
-                paste0(folder.path2(),"/","plot.3.1.data.csv"))
-
-    })
+    output$downloadData62.1 <- downloadHandler(
+      filename = "plot.3.1.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot62.1())$plot$data, file)
+      }
+    )
 
 
     plot62.2 <- reactive({
@@ -1033,13 +1083,12 @@ app_server <- function(input, output, session) {
       plot62.2()
     })
 
-    observeEvent(input$save62.2,{
-
-      write.csv(ggplot_build(plot62.2())$plot$data,
-                paste0(folder.path2(),"/","plot.3.2.data.csv"))
-
-    })
-
+    output$downloadData62.2 <- downloadHandler(
+      filename = "plot.3.2.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot62.2())$plot$data, file)
+      }
+    )
   })
 
 
@@ -1068,13 +1117,12 @@ app_server <- function(input, output, session) {
       plot63.1()
     })
 
-    observeEvent(input$save63.1,{
-
-      write.csv(ggplot_build(plot63.1())$plot$data,
-                paste0(folder.path2(),"/","plot.4.1.data.csv"))
-
-    })
-
+    output$downloadData63.1 <- downloadHandler(
+      filename = "plot.4.1.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot63.1())$plot$data, file)
+      }
+    )
 
 
     plot63.2 <- reactive({
@@ -1099,12 +1147,12 @@ app_server <- function(input, output, session) {
       plot63.2()
     })
 
-    observeEvent(input$save63.2,{
-
-      write.csv(ggplot_build(plot63.2())$plot$data,
-                paste0(folder.path2(),"/","plot.4.2.data.csv"))
-
-    })
+    output$downloadData63.2 <- downloadHandler(
+      filename = "plot.4.2.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot63.2())$plot$data, file)
+      }
+    )
   })
 
 
@@ -1144,12 +1192,13 @@ app_server <- function(input, output, session) {
       plot64.1()
     })
 
-    observeEvent(input$save64.1,{
+    output$downloadData64.1 <- downloadHandler(
+      filename = "plot.5.1.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot64.1())$plot$data, file)
+      }
+    )
 
-      write.csv(ggplot_build(plot64.1())$plot$data,
-                paste0(folder.path2(),"/","plot.5.1.data.csv"))
-
-    })
 
     plot64.2 <- reactive({
 
@@ -1178,12 +1227,13 @@ app_server <- function(input, output, session) {
       plot64.2()
     })
 
-    observeEvent(input$save64.2,{
+    output$downloadData64.2 <- downloadHandler(
+      filename = "plot.5.2.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot64.2())$plot$data, file)
+      }
+    )
 
-      write.csv(ggplot_build(plot64.2())$plot$data,
-                paste0(folder.path2(),"/","plot.5.2.data.csv"))
-
-    })
 
     plot64.3 <- reactive({
 
@@ -1212,13 +1262,12 @@ app_server <- function(input, output, session) {
       plot64.3()
     })
 
-    observeEvent(input$save64.3,{
-
-      write.csv(ggplot_build(plot64.3())$plot$data,
-                paste0(folder.path2(),"/","plot.5.3.data.csv"))
-
-    })
-
+    output$downloadData64.3 <- downloadHandler(
+      filename = "plot.5.3.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot64.3())$plot$data, file)
+      }
+    )
 
   })
 
@@ -1253,12 +1302,12 @@ app_server <- function(input, output, session) {
       plot65.1()
     })
 
-    observeEvent(input$save65.1,{
-
-      write.csv(ggplot_build(plot65.1())$plot$data,
-                paste0(folder.path2(),"/","plot.6.1.data.csv"))
-
-    })
+    output$downloadData65.1 <- downloadHandler(
+      filename = "plot.6.1.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot65.1())$plot$data, file)
+      }
+    )
 
 
     plot65.2 <- reactive({
@@ -1296,12 +1345,12 @@ app_server <- function(input, output, session) {
       plot65.2()
     })
 
-    observeEvent(input$save65.2,{
-
-      write.csv(ggplot_build(plot65.2())$plot$data,
-                paste0(folder.path2(),"/","plot.6.2.data.csv"))
-
-    })
+    output$downloadData65.2 <- downloadHandler(
+      filename = "plot.6.2.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot65.2())$plot$data, file)
+      }
+    )
 
 
     plot65.3 <- reactive({
@@ -1334,12 +1383,13 @@ app_server <- function(input, output, session) {
       plot65.3()
     })
 
-    observeEvent(input$save65.3,{
+    output$downloadData65.3 <- downloadHandler(
+      filename = "plot.6.3.data.csv",
+      content = function(file) {
+        write.csv(ggplot_build(plot65.3())$plot$data, file)
+      }
+    )
 
-      write.csv(ggplot_build(plot65.3())$plot$data,
-                paste0(folder.path2(),"/","plot.6.3.data.csv"))
-
-    })
 
   })
 
