@@ -16,21 +16,23 @@ app_server <- function(input, output, session) {
 
 ##### tab1 #####
 
-  roots = c(wd = '../')
-  shinyDirChoose(input, 'folder', roots = roots, filetypes = c('','json'))
+  # roots = c(wd = '../')
+  # shinyDirChoose(input, 'folder', roots = roots, filetypes = c('','json'))
 
-  folder.path <- reactive({req(input$folder)
-    as.character(parseDirPath(roots, input$folder))})
+  # folder.path <- reactive({req(input$folder)
+  #   as.character(parseDirPath(roots, input$folder))})
 
 
-  output$folderpath <- renderText(list.files(path = folder.path())[1])
+  observeEvent(input$sample.data, {
+  output$folderpath <- renderText(list.files(path = "raw_data/")[1])
+  })
 
 
   observeEvent(input$load, {
     withProgress(message = 'Loading data...', {
 
       incProgress(0.1, detail = "Reading JSON files")
-      rv$collect.data <- readJsonFiles(paste((folder.path()),"/",sep = ""),
+      rv$collect.data <- readJsonFiles0("raw_data/",
                                        nEnd = nchar(input$dataset.name.s))
 
       incProgress(0.3, detail = "Transforming data")

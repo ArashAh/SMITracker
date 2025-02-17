@@ -41,7 +41,7 @@ NULL
 #'
 #' @return A structured tabular data set by combining all the existing data
 
-readJsonFiles <- function(dataPath, nEnd){
+readJsonFiles0 <- function(dataPath, nEnd){
 
   list.of.files <- list.files(path = dataPath)
 
