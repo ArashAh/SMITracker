@@ -42,7 +42,6 @@ NULL
 #' @return A structured tabular data set by combining all the existing data
 
 readJsonFiles0 <- function(dataPath, nEnd){
-
   list.of.files <- list.files(path = dataPath)
 
   nEnd1 <- nchar(list.of.files[1]) - nEnd
@@ -57,6 +56,35 @@ readJsonFiles0 <- function(dataPath, nEnd){
 
     raw.data %<>%
       mutate(data.set.name = substr(i, start = 1, stop = nchar(i) - nEnd1)) %>%
+      select(data.set.name, frame,`x [nm]`, `y [nm]`,`intensity [photon]`,
+             `bkgstd [photon]`, `uncertainty [nm]`,`sigma [nm]`) %>%
+      set_colnames(c("data.set.name","frame.number", "X", "Y", "intensity",
+                     "background", "uncertainty", "sigma"))
+    collect.data <- bind_rows(collect.data, raw.data)
+  }
+
+  return(collect.data)
+}
+
+
+
+readJsonFiles <- function(dataPath, fileList, nEnd){
+
+  #list.of.files <- list.files(path = dataPath)
+
+  nEnd1 <- nchar(fileList[1]) - nEnd
+
+  collect.data <- NULL
+  collected.data <- NULL
+
+  for (i in seq_along(dataPath)) {
+    json.file <- dataPath[i]
+print(dataPath[i])
+print(fileList[i])
+    raw.data <- fromJSON(json.file)
+
+    raw.data %<>%
+      mutate(data.set.name = substr(fileList[i], start = 1, stop = nchar(fileList[i]) - nEnd1)) %>%
       select(data.set.name, frame,`x [nm]`, `y [nm]`,`intensity [photon]`,
              `bkgstd [photon]`, `uncertainty [nm]`,`sigma [nm]`) %>%
       set_colnames(c("data.set.name","frame.number", "X", "Y", "intensity",

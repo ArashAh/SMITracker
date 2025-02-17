@@ -9,7 +9,7 @@
 app_server <- function(input, output, session) {
   options(shiny.maxRequestSize = 300*1024^2)
 
-  #sourceCpp('R/MSDFunction.cpp')
+
 
   rv <- reactiveValues()
 
@@ -22,18 +22,33 @@ app_server <- function(input, output, session) {
   # folder.path <- reactive({req(input$folder)
   #   as.character(parseDirPath(roots, input$folder))})
 
-
+  # from read
   observeEvent(input$sample.data, {
   output$folderpath <- renderText(list.files(path = "raw_data/")[1])
   })
+  # from upload
+  folder.path <- reactive({req(input$jsonFiles)
+   input$jsonFiles$datapath})
 
+  file.name <- reactive({req(input$jsonFiles)
+     input$jsonFiles$name})
+
+
+  output$folderpath <- renderText(file.name()[1])
 
   observeEvent(input$load, {
     withProgress(message = 'Loading data...', {
 
       incProgress(0.1, detail = "Reading JSON files")
+      # from read
+       if (input$sample.data > 0) {
       rv$collect.data <- readJsonFiles0("raw_data/",
                                        nEnd = nchar(input$dataset.name.s))
+          } else if (input$sample.data == 0) {
+    # from upload
+       rv$collect.data <- readJsonFiles(folder.path(), file.name(),
+                                        nEnd = nchar(input$dataset.name.s))
+                                        }
 
       incProgress(0.3, detail = "Transforming data")
       rv$collect.data <- TransformData(InputData = rv$collect.data,
