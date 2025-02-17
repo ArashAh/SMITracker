@@ -9,29 +9,32 @@
 app_server <- function(input, output, session) {
   options(shiny.maxRequestSize = 300*1024^2)
 
-  #sourceCpp('R/MSDFunction.cpp')
+
 
   rv <- reactiveValues()
 
 
 ##### tab1 #####
 
-  roots = c(wd = '../')
-  shinyDirChoose(input, 'folder', roots = roots, filetypes = c('','json'))
 
-  folder.path <- reactive({req(input$folder)
-    as.character(parseDirPath(roots, input$folder))})
+  folder.path <- reactive({req(input$jsonFiles)
+   input$jsonFiles$datapath})
+
+  file.name <- reactive({req(input$jsonFiles)
+     input$jsonFiles$name})
 
 
-  output$folderpath <- renderText(list.files(path = folder.path())[1])
 
+  output$folderpath <- renderText(file.name()[1])
 
   observeEvent(input$load, {
     withProgress(message = 'Loading data...', {
 
       incProgress(0.1, detail = "Reading JSON files")
-      rv$collect.data <- readJsonFiles(paste((folder.path()),"/",sep = ""),
-                                       nEnd = nchar(input$dataset.name.s))
+
+
+       rv$collect.data <- readJsonFiles(folder.path(), file.name(),
+                                        nEnd = nchar(input$dataset.name.s))
 
       incProgress(0.3, detail = "Transforming data")
       rv$collect.data <- TransformData(InputData = rv$collect.data,

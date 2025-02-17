@@ -15,16 +15,15 @@ app_ui <- function(request) {
                  fluidRow(
                    column(2,
                           wellPanel(
-                            h5(strong("Navigate to the location of json files (outputs of
-                                      localization analysis in ThunderSTORM")),
+                            h5(strong("Upload the json files (outputs of
+                                      localization analysis in ThunderSTORM)")),
                             br(),
                             h5("Dataset names should follow a common style carrying
                                       relevant information for each dataset"),
                             br(),
-                            shinyDirButton(id = "folder",label = "Select input folder",
-                                           title = "Navigate to the directory of json
-                                           files produced as a result of localization
-                                           analysis in ThunderSTORM" ),
+                            fileInput("jsonFiles", "Upload json files",
+                                      multiple = TRUE,
+                                      accept = c("application/json", ".json")),
                             br(),
                             br(),
                             textInput("sep", "_", label = "Separator of the dataset name parts"),

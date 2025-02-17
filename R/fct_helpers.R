@@ -41,22 +41,23 @@ NULL
 #'
 #' @return A structured tabular data set by combining all the existing data
 
-readJsonFiles <- function(dataPath, nEnd){
+readJsonFiles <- function(dataPath, fileList, nEnd){
 
-  list.of.files <- list.files(path = dataPath)
+  #list.of.files <- list.files(path = dataPath)
 
-  nEnd1 <- nchar(list.of.files[1]) - nEnd
+  nEnd1 <- nchar(fileList[1]) - nEnd
 
   collect.data <- NULL
   collected.data <- NULL
 
-  for (i in list.of.files) {
-    json.file <- paste(dataPath, i, sep = "")
-
+  for (i in seq_along(dataPath)) {
+    json.file <- dataPath[i]
+print(dataPath[i])
+print(fileList[i])
     raw.data <- fromJSON(json.file)
 
     raw.data %<>%
-      mutate(data.set.name = substr(i, start = 1, stop = nchar(i) - nEnd1)) %>%
+      mutate(data.set.name = substr(fileList[i], start = 1, stop = nchar(fileList[i]) - nEnd1)) %>%
       select(data.set.name, frame,`x [nm]`, `y [nm]`,`intensity [photon]`,
              `bkgstd [photon]`, `uncertainty [nm]`,`sigma [nm]`) %>%
       set_colnames(c("data.set.name","frame.number", "X", "Y", "intensity",

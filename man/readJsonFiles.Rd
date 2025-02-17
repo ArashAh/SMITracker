@@ -4,7 +4,7 @@
 \alias{readJsonFiles}
 \title{Read Json files, collect tabular data}
 \usage{
-readJsonFiles(dataPath, nEnd)
+readJsonFiles(dataPath, fileList, nEnd)
 }
 \arguments{
 \item{dataPath}{A directory containing the json files}
