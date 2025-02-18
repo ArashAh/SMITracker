@@ -76,29 +76,6 @@ app_server <- function(input, output, session) {
     })
   })
 
- # shinyDirChoose(input,'folder2', roots = roots, filetypes = c('','rds'))
-
-
-  # folder.path2 <- reactive({req(input$folder2)
-   #  as.character(parseDirPath(roots, input$folder2))})
-
-     # output$folder.path.output <-
-     #   output$folder.path.output2 <-
-     #   output$folder.path.output3 <-
-     #   output$folder.path.output4 <-
-     #   output$folder.path.output5 <- renderText({
-     #     req(input$folder2)
-     #     folder.path2()
-     #}
-     #)
-
-  #observeEvent(input$save,{
-
-
-    # saveRDS(rv$collect.data, paste(folder.path2(),"/", "1_data_transformed_",
-    #                                rv$collect.data$analysis.id %>% unique(), "_",
-    #                                as.character(Sys.Date()), ".rds", sep = ""))
-
     output$downloadData1 <- downloadHandler(
       filename = function() {
         paste0("1_data_transformed_", unique(rv$collect.data$analysis.id), "_", Sys.Date(), ".rds")
@@ -108,8 +85,6 @@ app_server <- function(input, output, session) {
       }
     )
 
-
-#  })
 
 
   ##### tab2 ######
@@ -278,14 +253,7 @@ app_server <- function(input, output, session) {
 
 
 
-  #observeEvent(input$done, {
-
-
-
-    #show.data2 <<-rv$collect.out.data.to.save
-
-
-    output$downloadData2 <- downloadHandler(
+      output$downloadData2 <- downloadHandler(
       filename = function() {
         paste0("2_spatial_filtered_", unique(rv$collect.out.data$analysis.id), "_", Sys.Date(), ".rds")
       },
@@ -294,12 +262,6 @@ app_server <- function(input, output, session) {
       }
     )
 
-   # saveRDS(rv$collect.out.data.to.save, paste(folder.path2(),"/","2_spatial_filtered_",
-    #                                           rv$collect.out.data$analysis.id %>% unique(),
-     #                                          "_", as.character(Sys.Date()), ".rds", sep = ""))
-
-
-  #})
 
   ##### tab3 #####
 
@@ -397,7 +359,7 @@ app_server <- function(input, output, session) {
       incProgress(1, detail = "Completed")
     })
   })
-  # output$prog.reporter <-  renderText({rv$prog.reporter})
+
 
   output$eval <-  renderText({ req(rv$limits)
     c(if (rv$limits$xlimit > 0.01) {
@@ -451,14 +413,6 @@ app_server <- function(input, output, session) {
   )
 
 
-
-
-  #observeEvent(input$save2, {
-
-    # saveRDS(rv$collect.detected.data, paste(folder.path2(),"/","3_trajectories_detected_",
-    #                                         rv$collect.detected.data$analysis.id %>% unique(),
-    #                                         "_", as.character(Sys.Date()), ".rds", sep = ""))
-
     output$downloadData3 <- downloadHandler(
       filename = function() {
         paste0("3_trajectories_detected_", unique(rv$collect.detected.data$analysis.id), "_", Sys.Date(), ".rds")
@@ -467,9 +421,6 @@ app_server <- function(input, output, session) {
         saveRDS(rv$collect.detected.data, file)
       }
     )
-
-
-  #})
 
 
   ##### tab4 #####
@@ -587,12 +538,6 @@ app_server <- function(input, output, session) {
     #show.data4 <<- rv$transformed.data
   })
 
-  #observeEvent(input$save4, {
-
-   # saveRDS(rv$transformed.data, paste(folder.path2(),"/","4_visually_inspected_",
-    #                                   rv$transformed.data$analysis.id %>% unique(),
-     #                                  "_", as.character(Sys.Date()), ".rds", sep = ""))
-  #})
 
     output$downloadData4 <- downloadHandler(
       filename = function() {
@@ -771,12 +716,6 @@ app_server <- function(input, output, session) {
 
   })
 
-  # observeEvent(input$save5, {
-  #
-  #   saveRDS(rv$filtered.added.data, paste(folder.path2(),"/","5_noise_excluded_",
-  #                                         rv$filtered.added.data$analysis.id %>% unique(),
-  #                                         "_", as.character(Sys.Date()), ".rds", sep = ""))
-  # })
 
   output$downloadData5 <- downloadHandler(
     filename = function() {

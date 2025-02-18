@@ -9,6 +9,8 @@ readJsonFiles(dataPath, fileList, nEnd)
 \arguments{
 \item{dataPath}{A directory containing the json files}
 
+\item{fileList}{A list of json files inside the directory}
+
 \item{nEnd}{Number of characters to be included in the informative files name}
 }
 \value{
