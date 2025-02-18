@@ -37,6 +37,7 @@ NULL
 #'  directory and collects all the existing data inside a tabular data frame.
 #'
 #' @param dataPath A directory containing the json files
+#' @param fileList A list of json files inside the directory
 #' @param nEnd Number of characters to be included in the informative files name
 #'
 #' @return A structured tabular data set by combining all the existing data
@@ -70,7 +71,6 @@ readJsonFiles0 <- function(dataPath, nEnd){
 
 readJsonFiles <- function(dataPath, fileList, nEnd){
 
-  #list.of.files <- list.files(path = dataPath)
 
   nEnd1 <- nchar(fileList[1]) - nEnd
 
@@ -126,7 +126,7 @@ TransformData <- function(InputData, nameList, separator, numerName){
     mutate(n = data.set.name) %>%
     separate(n, nameList, sep = as.character(separator), fill = "right")
 
-  for(i in numerName) {
+  for (i in numerName) {
 
     Output[,i] <- as.numeric(str_extract(Output[,i], "[0-9,.]+"))
 
@@ -384,8 +384,7 @@ MakeLongForm <- function(InputMatrix) {
                          X = InputMatrix[, 1:(ncol(InputMatrix)/2)] %>%
                            unlist() %>%
                            as.vector(),
-                         Y = InputMatrix[, (ncol(InputMatrix) / 2 + 1) :
-                                           ncol(InputMatrix)] %>%
+                         Y = InputMatrix[, (ncol(InputMatrix) / 2 + 1):ncol(InputMatrix)] %>%
                            unlist() %>%
                            as.vector(),
                          track.register = rep(LETTERS[1:(ncol(InputMatrix)/2)],

@@ -19,7 +19,7 @@ app_ui <- function(request) {
                                       localization analysis in ThunderSTORM)")),
                             br(),
                             h5("Dataset names should follow a common style carrying
-                                      relevant information for each dataset"),
+                                      relevant metadata for each dataset"),
                             br(),
                             h5(strong("Start with sample datasets")),
                             actionButton(inputId = "sample.data",
@@ -46,13 +46,7 @@ app_ui <- function(request) {
                             br(),
                             br(),
                             br(),
-                            h5("Navigate to the directory where you want the output
-                                           files be stored"),
-                            # shinyDirButton(id = "folder2",label = "Select output folder",
-                            #                title =  "Navigate to output folder"),
-                            # br(),
-                            #verbatimTextOutput("folder.path.output"),
-                            #actionButton(inputId = "save", label = "Save"),
+                            h5("Save the result of analysis in this tab and keep a visual log"),
                             downloadButton('downloadData1', 'Save output'),
                             br(),
                             br(),
@@ -61,12 +55,12 @@ app_ui <- function(request) {
 
                    column(10,
                           h5(strong("Example of a dataset name:")),
+                          verbatimTextOutput("folderpath"),
                           h5("Dataset names should at least include protein name and frame interval;
                                they can include up to 5 different experimental conditions"),
-                          verbatimTextOutput("folderpath"),
                           br(),
-                          h5(strong("Copy the unique part of dataset name and past it below
-                                       (exclude the repeatative suffixes)")),
+                          h5(strong("Copy the unique part of dataset name carrying metadata and
+                                    past it below (exclude the non-metadata parts)")),
                           wellPanel(textInput("dataset.name.s",
                                               ""))),
                    column(10, h5(strong("Define the type of the variable each part of the
