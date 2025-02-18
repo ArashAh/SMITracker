@@ -50,7 +50,7 @@ readJsonFiles0 <- function(dataPath, nEnd){
   collected.data <- NULL
 
   for (i in list.of.files) {
-    json.file <- paste(dataPath, i, sep = "")
+    json.file <- paste(dataPath, "/",i, sep = "")
 
     raw.data <- fromJSON(json.file)
 
@@ -79,8 +79,7 @@ readJsonFiles <- function(dataPath, fileList, nEnd){
 
   for (i in seq_along(dataPath)) {
     json.file <- dataPath[i]
-print(dataPath[i])
-print(fileList[i])
+
     raw.data <- fromJSON(json.file)
 
     raw.data %<>%

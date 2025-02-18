@@ -23,8 +23,9 @@ app_server <- function(input, output, session) {
   #   as.character(parseDirPath(roots, input$folder))})
 
   # from read
+  rawFilepath <- system.file("extdata", package = "SMITracker")
   observeEvent(input$sample.data, {
-  output$folderpath <- renderText(list.files(path = "raw_data/")[1])
+  output$folderpath <- renderText(list.files(path = rawFilepath)[1])
   })
   # from upload
   folder.path <- reactive({req(input$jsonFiles)
@@ -32,6 +33,7 @@ app_server <- function(input, output, session) {
 
   file.name <- reactive({req(input$jsonFiles)
      input$jsonFiles$name})
+
 
 
   output$folderpath <- renderText(file.name()[1])
@@ -42,7 +44,7 @@ app_server <- function(input, output, session) {
       incProgress(0.1, detail = "Reading JSON files")
       # from read
        if (input$sample.data > 0) {
-      rv$collect.data <- readJsonFiles0("raw_data/",
+      rv$collect.data <- readJsonFiles0(rawFilepath,
                                        nEnd = nchar(input$dataset.name.s))
           } else if (input$sample.data == 0) {
     # from upload
