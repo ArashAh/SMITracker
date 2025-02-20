@@ -94,7 +94,7 @@ app_server <- function(input, output, session) {
 
     output$downloadData1 <- downloadHandler(
       filename = function() {
-        paste0("1_data_transformed_", unique(rv$collect.data$analysis.id), "_", Sys.Date(), ".rds")
+        paste0("1_data_loading_", unique(rv$collect.data$analysis.id), "_", Sys.Date(), ".rds")
       },
       content = function(file) {
         saveRDS(rv$collect.data, file)
@@ -271,7 +271,7 @@ app_server <- function(input, output, session) {
 
       output$downloadData2 <- downloadHandler(
       filename = function() {
-        paste0("2_spatial_filtered_", unique(rv$collect.out.data$analysis.id), "_", Sys.Date(), ".rds")
+        paste0("2_spatial_filtering_", unique(rv$collect.out.data$analysis.id), "_", Sys.Date(), ".rds")
       },
       content = function(file) {
         saveRDS(rv$collect.out.data.to.save, file)
@@ -431,7 +431,7 @@ app_server <- function(input, output, session) {
 
     output$downloadData3 <- downloadHandler(
       filename = function() {
-        paste0("3_trajectories_detected_", unique(rv$collect.detected.data$analysis.id), "_", Sys.Date(), ".rds")
+        paste0("3_trajectory_detection_", unique(rv$collect.detected.data$analysis.id), "_", Sys.Date(), ".rds")
       },
       content = function(file) {
         saveRDS(rv$collect.detected.data, file)
@@ -557,7 +557,7 @@ app_server <- function(input, output, session) {
 
     output$downloadData4 <- downloadHandler(
       filename = function() {
-        paste0("4_visually_inspected_", unique(rv$transformed.data$analysis.id), "_", Sys.Date(), ".rds")
+        paste0("4_visual_inspection_", unique(rv$transformed.data$analysis.id), "_", Sys.Date(), ".rds")
       },
       content = function(file) {
         saveRDS(rv$transformed.data, file)
@@ -735,7 +735,7 @@ app_server <- function(input, output, session) {
 
   output$downloadData5 <- downloadHandler(
     filename = function() {
-      paste0("5_noise_excluded_", unique(rv$filtered.added.data$analysis.id), "_", Sys.Date(), ".rds")
+      paste0("5_noise_exclusion_", unique(rv$filtered.added.data$analysis.id), "_", Sys.Date(), ".rds")
     },
     content = function(file) {
       saveRDS(rv$filtered.added.data, file)
