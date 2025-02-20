@@ -51,7 +51,7 @@ app_ui <- function(request) {
                             downloadButton('downloadData1', 'Download Processed Output'),
                             br(),
                             br(),
-                            screenshotButton(filename = "Data Loading Tab", label = "Save Visual Log")
+                            screenshotButton(filename = "1_data_loading_tab", label = "Save Visual Log")
                           )
                    ),
 
@@ -179,15 +179,15 @@ app_ui <- function(request) {
                           downloadButton('downloadData2', 'Download Processed Output'),
                                     br(),
                                     br(),
-                          screenshotButton(filename = "Spatial Filtering Tab", label = "Save Visual Log")
+                          screenshotButton(filename = "2_spatial_filtering_tab", label = "Save Visual Log")
                                     )),
                    h5(strong("Selected data set name:")),
                    verbatimTextOutput("full.name"),
-                   column(5, plotOutput("plot1",
+                   column(4, plotOutput("plot1",
                                         brush = "plot_brush")),
                    column(5, plotOutput("plot2")),
                    h5(strong("Progress:")),
-                   column(10,
+                   column(9,
                           dataTableOutput("progress"),
                           br(),
                           br(),
@@ -209,7 +209,7 @@ app_ui <- function(request) {
                                                  value = 360),
                                     numericInput("max.dy",
                                                  label = "Max frame-to-frame displacement
-                                                 across Substrate (nm)",
+                                                 across substrate (nm)",
                                                  value = 240),
                                     numericInput("max.dx.2",
                                                  label = "Localization precision (nm)",
@@ -251,7 +251,7 @@ app_ui <- function(request) {
                                     downloadButton('downloadData3', 'Download Processed Output'),
                                     br(),
                                     br(),
-                                    screenshotButton(filename = "Trajectory Detection Tab", label = "Save Visual Log"))),
+                                    screenshotButton(filename = "3_trajectory_detection_tab", label = "Save Visual Log"))),
                    h5(strong("Trajectory Detection Result Overview")),
                    column(9, plotOutput("plot31")),
                    column(9, verbatimTextOutput("eval"),
@@ -276,7 +276,7 @@ app_ui <- function(request) {
                             actionButton(inputId = "do.it",
                                          label = "Visualize Trajectories"),
                             br(),
-                            h5("Inspection and Artifact Removal"),
+                            h5(strong("Inspection and Artifact Removal")),
                             p("Inspect trajectories visually and remove any detected artifacts"),
                             br(),
                             numericInput("num41",
@@ -293,13 +293,13 @@ app_ui <- function(request) {
                             downloadButton('downloadData4', 'Download Processed Output'),
                             br(),
                             br(),
-                            screenshotButton(filename = "Visual Inspection Tab", label = "Save Visual Log"))),
+                            screenshotButton(filename = "4_visual_inspection_tab", label = "Save Visual Log"))),
                    h5(strong("Selected Dataset:")),
                    verbatimTextOutput("full.name41"),
                    h5(strong("Selected Trajectory:")),
                    verbatimTextOutput("full.name42"),
                    column(5, plotOutput("plot41")),
-                   column(5, plotOutput("plot42")),
+                   column(4, plotOutput("plot42")),
                  )),
         tabPanel(title = "Noise Exclusion",
                  fluidRow(
@@ -347,7 +347,7 @@ app_ui <- function(request) {
                             downloadButton('downloadData5', 'Download Processed Output'),
                             br(),
                             br(),
-                            screenshotButton(filename = "Noise Exclusion Tab", label = "Save Visual Log")
+                            screenshotButton(filename = "5_noise_exclusion_tab", label = "Save Visual Log")
                           )),
                    column(6, offset = 1,
                           h5(strong("Noise Exclusion Results")),
@@ -380,6 +380,8 @@ app_ui <- function(request) {
                           br()
                    )),
                  h5(strong("Visualization of Analysis Outputs")),
+                 br(),
+                 br(),
                  column(12,
                         wellPanel(
                           h5(strong("Scanning Speed")),
@@ -393,10 +395,10 @@ app_ui <- function(request) {
                                       c("expr.cond1", "expr.cond2")))),
                  column(4, plotOutput("plot60.1")),
                  column(8, plotOutput("plot60.2")),
-                 column(1, offset = 3, downloadButton('downloadData60.1', 'Download plot.1.1 data')),
+                 column(1, offset = 2, downloadButton('downloadData60.1', 'Download plot.1.1 data')),
                  column(1, offset = 7, downloadButton('downloadData60.2', 'Download plot.1.2 data')),
                  column(8, offset = 4, plotOutput("plot60.3")),
-                 column(1, offset = 11, downloadButton('downloadData60.3', 'Download plot.1.3 data')),
+                 column(1, offset = 10, downloadButton('downloadData60.3', 'Download plot.1.3 data')),
 
                  column(12,
                         br(),
@@ -413,7 +415,7 @@ app_ui <- function(request) {
                                       c("expr.cond1", "expr.cond2")))),
                  column(4, plotOutput("plot61.1")),
                  column(8,plotOutput("plot61.2")),
-                 column(1, offset = 3, downloadButton('downloadData61.1', 'Download plot.2.1 data')),
+                 column(1, offset = 2, downloadButton('downloadData61.1', 'Download plot.2.1 data')),
                  column(1, offset = 7, downloadButton('downloadData61.2', 'Download plot.2.2 data')),
 
                  column(12,
@@ -431,7 +433,7 @@ app_ui <- function(request) {
                                       c("expr.cond1", "expr.cond2")))),
                  column(4, plotOutput("plot62.1")),
                  column(8, plotOutput("plot62.2")),
-                 column(1, offset = 3, downloadButton('downloadData62.1', 'Download plot.3.1 data')),
+                 column(1, offset = 2, downloadButton('downloadData62.1', 'Download plot.3.1 data')),
                  column(1, offset = 7, downloadButton('downloadData62.2', 'Download plot.3.2 data')),
 
                  column(12,
@@ -449,7 +451,7 @@ app_ui <- function(request) {
                                       c("expr.cond1", "expr.cond2")))),
                  column(4, plotOutput("plot63.1")),
                  column(8, plotOutput("plot63.2")),
-                 column(1, offset = 3, downloadButton('downloadData63.1', 'Download plot.4.1 data')),
+                 column(1, offset = 2, downloadButton('downloadData63.1', 'Download plot.4.1 data')),
                  column(1, offset = 7, downloadButton('downloadData63.2', 'Download plot.4.1 data')),
 
                  column(12,
@@ -467,10 +469,10 @@ app_ui <- function(request) {
                                       c("expr.cond1", "expr.cond2")))),
                  column(4, plotOutput("plot64.1")),
                  column(8, plotOutput("plot64.2")),
-                 column(1, offset = 3, downloadButton('downloadData64.1', 'Download plot.5.1 data')),
+                 column(1, offset = 2, downloadButton('downloadData64.1', 'Download plot.5.1 data')),
                  column(1, offset = 7, downloadButton('downloadData64.2', 'Download plot.5.2 data')),
                  column(8, offset = 4, plotOutput("plot64.3")),
-                 column(1, offset = 11, downloadButton('downloadData64.3', 'Download plot.5.3 data')),
+                 column(1, offset = 10, downloadButton('downloadData64.3', 'Download plot.5.3 data')),
 
                  column(12,
                         br(),
@@ -486,15 +488,15 @@ app_ui <- function(request) {
                                       c("expr.cond1", "expr.cond2")))),
                  column(4, plotOutput("plot65.1")),
                  column(8, plotOutput("plot65.2")),
-                 column(1, offset = 3, downloadButton('downloadData65.1', 'Download plot.6.1 data' )),
+                 column(1, offset = 2, downloadButton('downloadData65.1', 'Download plot.6.1 data' )),
                  column(1, offset = 7, downloadButton('downloadData65.2', 'Download plot.6.2 data')),
                  column(8, offset = 4,  plotOutput("plot65.3")),
-                 column(1, offset = 11, downloadButton('downloadData65.3', 'Download plot.6.3 data'),
+                 column(1, offset = 10, downloadButton('downloadData65.3', 'Download plot.6.3 data'),
                         br(),
                         br()
                  ),
                  wellPanel(
-                 column(1, screenshotButton(filename = "Analysis Output Tab", label = "Save Visual Log"))
+                 column(1, screenshotButton(filename = "6_analysis_output_tab", label = "Save Visual Log"))
                  )
 
 
