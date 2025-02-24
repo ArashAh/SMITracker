@@ -238,7 +238,7 @@ app_ui <- function(request) {
                                     br(),
                                     br(),
                                     br(),
-                                    actionButton(inputId = "show", label = "Visualize Detected Trajectories:"),
+                                    actionButton(inputId = "show", label = "Visualize Detected Trajectories"),
                                     br(),
                                     br(),
                                     br(),
