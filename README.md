@@ -59,7 +59,7 @@ navigate to a directory to clone this repository and run the following commands:
     docker build -f Dockerfile --progress=plain -t smitracker:latest .
     ```
 
-4. **Run the Docker container: **
+4. **Run the Docker container**:
 
     ```sh
     docker run -p 80:80 smitracker:latest

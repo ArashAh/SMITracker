@@ -757,25 +757,25 @@ app_server <- function(input, output, session) {
 
 
     updateCheckboxGroupInput(session, "inCheckboxGroup",
-                             label = "Proteins added",
+                             label = "Proteins Added",
                              choices = rv$protein.list, inline = TRUE, selected = rv$protein.list)
     updateCheckboxGroupInput(session, "inCheckboxGroup0",
-                             label = "Proteins added",
+                             label = "Proteins Added",
                              choices = rv$protein.list, inline = TRUE, selected = rv$protein.list)
     updateCheckboxGroupInput(session, "inCheckboxGroup1",
-                             label = "Proteins added",
+                             label = "Proteins Added",
                              choices = rv$protein.list, inline = TRUE, selected = rv$protein.list)
     updateCheckboxGroupInput(session, "inCheckboxGroup2",
-                             label = "Proteins added",
+                             label = "Proteins Added",
                              choices = rv$protein.list, inline = TRUE, selected = rv$protein.list)
     updateCheckboxGroupInput(session, "inCheckboxGroup3",
-                             label = "Proteins added",
+                             label = "Proteins Added",
                              choices = rv$protein.list, inline = TRUE, selected = rv$protein.list)
     updateCheckboxGroupInput(session, "inCheckboxGroup4",
-                             label = "Proteins added",
+                             label = "Proteins Added",
                              choices = rv$protein.list, inline = TRUE, selected = rv$protein.list)
     updateCheckboxGroupInput(session, "inCheckboxGroup5",
-                             label = "Proteins added",
+                             label = "Proteins Added",
                              choices = rv$protein.list, inline = TRUE, selected = rv$protein.list)
 
 
@@ -785,25 +785,25 @@ app_server <- function(input, output, session) {
     rv$conditions.list <- c("NA.condition", rv$conditions.list)
 
     updateSelectInput(session, "in.select",
-                      label = "Exprimental condition",
+                      label = "Select Exprimental Condition",
                       choices = rv$conditions.list)
     updateSelectInput(session, "in.select0",
-                      label = "Exprimental condition",
+                      label = "Select Exprimental Condition",
                       choices = rv$conditions.list)
     updateSelectInput(session, "in.select1",
-                      label = "Exprimental condition",
+                      label = "Select Exprimental Condition",
                       choices = rv$conditions.list)
     updateSelectInput(session, "in.select2",
-                      label = "Exprimental condition",
+                      label = "Select Exprimental Condition",
                       choices = rv$conditions.list)
     updateSelectInput(session, "in.select3",
-                      label = "Exprimental condition",
+                      label = "Select Exprimental Condition",
                       choices = rv$conditions.list)
     updateSelectInput(session, "in.select4",
-                      label = "Exprimental condition",
+                      label = "Select Exprimental Condition",
                       choices = rv$conditions.list)
     updateSelectInput(session, "in.select5",
-                      label = "Exprimental condition",
+                      label = "Select Exprimental Condition",
                       choices = rv$conditions.list)
 
 
