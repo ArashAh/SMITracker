@@ -63,11 +63,11 @@ app_ui <- function(request) {
                             You can include up to five different experimental conditions
                             (expr.cond)."),
                           h5("Copy and paste the dataset name with metadata here
-                                    (exclude the non-metadata parts)"),
+                                    (exclude the non-metadata parts):"),
                           wellPanel(textInput("dataset.name.s",
                                               ""))),
                    column(9, h5(strong("Specify the type of variable each part of the dataset
-                                        name represents"))),
+                                        name represents:"))),
                    column(1, selectInput("pos1", "Part1_",
                                          c("NA" = "remove1", "protein", "frame.interval",
                                            "expr.cond1",
