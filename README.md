@@ -24,7 +24,7 @@ Open an R console and run the following commands:
 2. **Install SMITracker from GitHub:** 
 
       ``` r
-      devtools::install_github("ArashAh/testSMITracker")
+      devtools::install_github("ArashAh/SMITracker")
       
       ```
 3. **Initiate the interface and analyze the data:**
@@ -43,8 +43,8 @@ navigate to a directory to clone this repository and run the following commands:
 1. **Clone the repository**:
 
     ```sh
-    git clone https://github.com/ArashAh/testSMITracker
-    cd testSMITracker/deploy/
+    git clone https://github.com/ArashAh/SMITracker
+    cd SMITracker/deploy/
     ```
 
 2. **Build the base Docker image**:

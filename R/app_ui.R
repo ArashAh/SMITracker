@@ -39,7 +39,6 @@ app_ui <- function(request) {
                                                     "expr.cond4",
                                                     "expr.cond5"), multiple = TRUE),
                             br(),
-                            br(),
                             textInput(
                               "analysis.id", "Analysis Identifier",
                               placeholder = "Enter a unique ID for this analysis"
@@ -257,8 +256,7 @@ app_ui <- function(request) {
                           br()),
 
                    h5(strong("Comparison of Trajectories for Inspection:")),
-                   column(6, offset = 1,  plotOutput("plot32"),
-                          br()),
+                   column(6, offset = 1,  plotOutput("plot32")),
                    column(6,  h5(strong("Visualized Dataset:"))),
                    br(),
                    column(9, verbatimTextOutput("full.name2")),
