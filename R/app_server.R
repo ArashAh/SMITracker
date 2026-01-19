@@ -984,11 +984,11 @@ app_server <- function(input, output, session) {
         group_by(protein, across(all_of(input$in.select2))) %>%
         summarise(ave.scanning.coverage = mean(scanning.coverage)) %>%
         ggplot() +
-        geom_point(aes(x = protein, y = ave.scanning.coverage,
+        geom_point(aes(x = protein, y = ave.scanning.coverage/1000,
                        color = as.factor(eval(as.name(input$in.select2)))), size = 5) +
         ggtitle("Average scanning coverage") +
         xlab("Protein") +
-        ylab("Scanning coverage (nm)") +
+        ylab(expression(Scanning~coverage~(mu*m))) +
         scale_color_discrete(name = "Experimental condition")
     })
 
@@ -1012,12 +1012,12 @@ app_server <- function(input, output, session) {
         group_by(protein, trajectory.unique.id, across(all_of(input$in.select2))) %>%
         summarise(scanning.coverage = mean((max(r.X) - min(r.X))/0.34)) %>%
         ggplot() +
-        geom_histogram(aes(x = scanning.coverage,
+        geom_histogram(aes(x = scanning.coverage/1000,
                            fill = as.factor(eval(as.name(input$in.select2)))),
                        bins = 30) +
         facet_wrap(~protein, scales = "free") +
         ggtitle("Distribution of scanning coverage") +
-        xlab("Scanning  coverage (nm)") +
+        xlab(expression(Scanning~coverage~(mu*m))) +
         ylab("Counts (trajectories)") +
         scale_fill_discrete(name = "Experimental condition")
     })
@@ -1047,11 +1047,11 @@ app_server <- function(input, output, session) {
         group_by(protein, across(all_of(input$in.select3))) %>%
         summarise(ave.bases.checked = mean(bases.checked)) %>%
         ggplot() +
-        geom_point(aes(x = protein , y = ave.bases.checked,
+        geom_point(aes(x = protein , y = ave.bases.checked/1000,
                        color = as.factor(eval(as.name(input$in.select3)))), size = 5) +
         ggtitle("Average accumulative scanning length") +
         xlab("Protein") +
-        ylab("Accumulative scanning length (nm)") +
+        ylab(expression(Accumulative~scanning~length~(mu*m))) +
         scale_color_discrete(name = "Experimental condition")
     })
 
@@ -1075,12 +1075,12 @@ app_server <- function(input, output, session) {
         group_by(protein, trajectory.unique.id, across(all_of(input$in.select3))) %>%
         summarise(bases.checked = max(cumsum(abs(step)), na.rm = T)/0.34) %>%
         ggplot() +
-        geom_histogram(aes(x = bases.checked,
+        geom_histogram(aes(x = bases.checked/1000,
                            fill = as.factor(eval(as.name(input$in.select3)))),
                        bins = 30) +
         facet_wrap(~protein, scales = "free") +
         ggtitle("Distribution of accumulative scanning length") +
-        xlab("accumulative scanning length (nm)") +
+        xlab(expression(Accumulative~scanning~length~(mu*m))) +
         ylab("Counts (trajectories)") +
         scale_fill_discrete(name = "Experimental condition")
     })
@@ -1124,7 +1124,7 @@ app_server <- function(input, output, session) {
                        shape = as.factor(eval(as.name(input$in.select4)))), size = 5) +
         ggtitle("Average redundancy-efficiency") +
         ylab("Redundancy") +
-        xlab("Efficiency (nm/ms)") +
+        xlab(expression(Efficiency~(mu*m/s))) +
         scale_color_discrete(name = "Protein") +
         scale_shape_discrete(name = "Experimental condition")
 
@@ -1161,7 +1161,7 @@ app_server <- function(input, output, session) {
                        color = as.factor(eval(as.name(input$in.select4)))), size = 0.1) +
         ggtitle("Distribution of redundancy-efficiency for trajectories") +
         ylab("Redundancy") +
-        xlab("Efficiency (nm/ms)") +
+        xlab(expression(Efficiency~(mu*m/s))) +
         scale_color_discrete(name = "Experimental condition")
 
     })
@@ -1196,7 +1196,7 @@ app_server <- function(input, output, session) {
                        color = protein), size = 0.1) +
         ggtitle("Distribution of redundancy-efficiency for trajectories") +
         ylab("Redundancy") +
-        xlab("Efficiency (nm/ms)") +
+        xlab(expression(Efficiency~(mu*m/s))) +
         scale_color_discrete(name = "Protein")
 
     })

@@ -10,6 +10,23 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     fluidPage(
+      div(
+        style = "text-align: center;
+                 padding: 12px 15px;
+                 margin-bottom: 12px;
+                 border-bottom: 2px solid #3498db;
+                 background-color: #b8c9db;",
+        h3("SMITracker",
+           style = "color: #2c3e50;
+                    margin: 0;
+                    font-size: 28px;
+                    font-weight: bold;
+                    display: inline-block;"),
+        span(" | Single Molecule Imaging Tracker",
+             style = "color: #5a6c7d;
+                      font-size: 14px;
+                      margin-left: 10px;")
+      ),
       tabsetPanel(
         tabPanel(title = "Data Loading",
                  fluidRow(
