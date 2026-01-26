@@ -10,6 +10,23 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     fluidPage(
+      div(
+        style = "text-align: center;
+                 padding: 12px 15px;
+                 margin-bottom: 12px;
+                 border-bottom: 2px solid #3498db;
+                 background-color: #b8c9db;",
+        h3("SMITracker",
+           style = "color: #2c3e50;
+                    margin: 0;
+                    font-size: 28px;
+                    font-weight: bold;
+                    display: inline-block;"),
+        span(" | Single Molecule Interaction Tracker",
+             style = "color: #5a6c7d;
+                      font-size: 14px;
+                      margin-left: 10px;")
+      ),
       tabsetPanel(
         tabPanel(title = "Data Loading",
                  fluidRow(
@@ -44,7 +61,6 @@ app_ui <- function(request) {
                                                     "expr.cond3",
                                                     "expr.cond4",
                                                     "expr.cond5"), multiple = TRUE),
-                            br(),
                             br(),
                             textInput(
                               "analysis.id", "Analysis Identifier",
@@ -138,7 +154,7 @@ app_ui <- function(request) {
                  fluidRow(
                    column(3,
                           wellPanel(
-                            fileInput("file1", label = "Load Output from Data Loading Tab", accept = ".rds"),
+                            uiOutput("file1_ui"),
                             actionButton(inputId = "start", label = "Start Processing"),
                             br(),
                             br(),
@@ -206,8 +222,7 @@ app_ui <- function(request) {
         tabPanel(title = "Trajectory Detection",
                  fluidRow(
                    column(3,
-                          wellPanel(fileInput("file2", label = "Load Output from Spatial Filtering Tab",
-                                              accept = ".rds"),
+                          wellPanel(uiOutput("file2_ui"),
                                     numericInput("max.dx",
                                                  label = "Max Frame-to-frame Displacement
                                                  Along Substrate (nm)",
@@ -263,8 +278,7 @@ app_ui <- function(request) {
                           br()),
 
                    h5(strong("Comparison of Trajectories for Inspection:")),
-                   column(6, offset = 1,  plotOutput("plot32"),
-                          br()),
+                   column(6, offset = 1,  plotOutput("plot32")),
                    column(6,  h5(strong("Visualized Dataset:"))),
                    br(),
                    column(9, verbatimTextOutput("full.name2")),
@@ -276,7 +290,7 @@ app_ui <- function(request) {
                  fluidRow(
                    column(3,
                           wellPanel(
-                            fileInput("file3", label = "Load Output from Trajectory Detection Tab", accept = ".rds"),
+                            uiOutput("file3_ui"),
                             br(),
                             actionButton(inputId = "do.it",
                                          label = "Visualize Trajectories"),
@@ -310,8 +324,8 @@ app_ui <- function(request) {
                  fluidRow(
                    column(3,
                           wellPanel(
-                            fileInput("file51", label = "Load Output from Data Loading Tab", accept = ".rds"),
-                            fileInput("file52", label = "Load Output from Visual Inspection Tab", accept = ".rds"),
+                            uiOutput("file51_ui"),
+                            uiOutput("file52_ui"),
                             actionButton(inputId = "noise.filters", label = "Apply Noise Filters"),
                             checkboxGroupInput("checkGroup", h5(strong("Select Detected Data Types to Visualize")),
                                                choices = list("Noise-excluded data" =
@@ -368,7 +382,7 @@ app_ui <- function(request) {
                  fluidRow(
                    column(3,
                           wellPanel(
-                            fileInput("file6", label = "Load Output from Noise Exclusion Tab", accept = ".rds"),
+                            uiOutput("file6_ui"),
                             p("Upload files sequentially and press 'Add Data' to include each one."),
                             actionButton(inputId = "add6", label = "Add Data"),
                             br(),

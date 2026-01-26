@@ -98,6 +98,7 @@ app_server <- function(input, output, session) {
       },
       content = function(file) {
         saveRDS(rv$collect.data, file)
+        rv$data_from_tab1 <- rv$collect.data  # Store for tab2
       }
     )
 
@@ -105,9 +106,31 @@ app_server <- function(input, output, session) {
 
   ##### tab2 ######
 
+  output$file1_ui <- renderUI({
+    if (!is.null(rv$data_from_tab1)) {
+      div(
+        style = "padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px;",
+        icon("check-circle"),
+        strong(" Data loaded from Tab 1"),
+        br(),
+        actionLink("upload_different", "Upload different file instead")
+      )
+    } else {
+      fileInput("file1", label = "Load Output from Data Loading Tab", accept = ".rds")
+    }
+  })
+
+  observeEvent(input$upload_different, {
+    rv$data_from_tab1 <- NULL
+  })
+
   my.data <- reactive({
+    if (!is.null(rv$data_from_tab1) && is.null(input$file1)) {
+      return(rv$data_from_tab1)
+    }
     req(input$file1)
-    readRDS(input$file1$datapath)})
+    readRDS(input$file1$datapath)
+  })
 
 
   list.of.data.sets <- reactive(my.data() %>%
@@ -275,16 +298,38 @@ app_server <- function(input, output, session) {
       },
       content = function(file) {
         saveRDS(rv$collect.out.data.to.save, file)
+        rv$data_from_tab2 <- rv$collect.out.data.to.save  # Store for tab3
       }
     )
 
 
   ##### tab3 #####
 
+  output$file2_ui <- renderUI({
+    if (!is.null(rv$data_from_tab2)) {
+      div(
+        style = "padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px;",
+        icon("check-circle"),
+        strong(" Data loaded from Tab 2"),
+        br(),
+        actionLink("upload_different2", "Upload different file instead")
+      )
+    } else {
+      fileInput("file2", label = "Load Output from Spatial Filtering Tab", accept = ".rds")
+    }
+  })
+
+  observeEvent(input$upload_different2, {
+    rv$data_from_tab2 <- NULL
+  })
 
   filtered.data <- reactive({
+    if (!is.null(rv$data_from_tab2) && is.null(input$file2)) {
+      return(rv$data_from_tab2)
+    }
     req(input$file2)
-    readRDS(input$file2$datapath)})
+    readRDS(input$file2$datapath)
+  })
 
 
   observeEvent(c(input$detect, input$reanalyse), {
@@ -435,16 +480,38 @@ app_server <- function(input, output, session) {
       },
       content = function(file) {
         saveRDS(rv$collect.detected.data, file)
+        rv$data_from_tab3 <- rv$collect.detected.data  # Store for tab4
       }
     )
 
 
   ##### tab4 #####
 
+  output$file3_ui <- renderUI({
+    if (!is.null(rv$data_from_tab3)) {
+      div(
+        style = "padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px;",
+        icon("check-circle"),
+        strong(" Data loaded from Tab 3"),
+        br(),
+        actionLink("upload_different3", "Upload different file instead")
+      )
+    } else {
+      fileInput("file3", label = "Load Output from Trajectory Detection Tab", accept = ".rds")
+    }
+  })
+
+  observeEvent(input$upload_different3, {
+    rv$data_from_tab3 <- NULL
+  })
 
   detected.data <- reactive({
+    if (!is.null(rv$data_from_tab3) && is.null(input$file3)) {
+      return(rv$data_from_tab3)
+    }
     req(input$file3)
-    readRDS(input$file3$datapath)})
+    readRDS(input$file3$datapath)
+  })
 
   output$data.set.name <- renderPrint({detected.data() %>%
       select(data.set.name) %>% unique()})
@@ -561,18 +628,63 @@ app_server <- function(input, output, session) {
       },
       content = function(file) {
         saveRDS(rv$transformed.data, file)
+        rv$data_from_tab4 <- rv$transformed.data  # Store for tab5
       }
     )
 
   ##### tab5 #####
 
+  output$file51_ui <- renderUI({
+    if (!is.null(rv$data_from_tab1)) {
+      div(
+        style = "padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px;",
+        icon("check-circle"),
+        strong(" Data loaded from Tab 1"),
+        br(),
+        actionLink("upload_different51", "Upload different file instead")
+      )
+    } else {
+      fileInput("file51", label = "Load Output from Data Loading Tab", accept = ".rds")
+    }
+  })
+
+  output$file52_ui <- renderUI({
+    if (!is.null(rv$data_from_tab4)) {
+      div(
+        style = "padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px;",
+        icon("check-circle"),
+        strong(" Data loaded from Tab 4"),
+        br(),
+        actionLink("upload_different52", "Upload different file instead")
+      )
+    } else {
+      fileInput("file52", label = "Load Output from Visual Inspection Tab", accept = ".rds")
+    }
+  })
+
+  observeEvent(input$upload_different51, {
+    rv$data_from_tab1 <- NULL
+  })
+
+  observeEvent(input$upload_different52, {
+    rv$data_from_tab4 <- NULL
+  })
+
   raw.data <- reactive({
+    if (!is.null(rv$data_from_tab1) && is.null(input$file51)) {
+      return(rv$data_from_tab1)
+    }
     req(input$file51)
-    readRDS(input$file51$datapath)})
+    readRDS(input$file51$datapath)
+  })
 
   detected.inspected.data <- reactive({
+    if (!is.null(rv$data_from_tab4) && is.null(input$file52)) {
+      return(rv$data_from_tab4)
+    }
     req(input$file52)
-    readRDS(input$file52$datapath)})
+    readRDS(input$file52$datapath)
+  })
 
   observeEvent(c(input$noise.filters, input$stuck.gauge,
                  input$flank.gauge, input$intensity.gauge,
@@ -739,13 +851,42 @@ app_server <- function(input, output, session) {
     },
     content = function(file) {
       saveRDS(rv$filtered.added.data, file)
+      rv$data_from_tab5 <- rv$filtered.added.data  # Store for tab6
     }
   )
 
   ##### tab6 #####
+
+  output$file6_ui <- renderUI({
+    if (!is.null(rv$data_from_tab5) && is.null(rv$tab6_manual_upload)) {
+      div(
+        div(
+          style = "padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; margin-bottom: 5px;",
+          icon("check-circle"),
+          strong(" Data loaded from Tab 5"),
+          br(),
+          actionLink("upload_different6", "Upload different file instead")
+        ),
+        p("Or upload additional files:"),
+        fileInput("file6", label = "Load Additional Output from Noise Exclusion Tab", accept = ".rds")
+      )
+    } else {
+      fileInput("file6", label = "Load Output from Noise Exclusion Tab", accept = ".rds")
+    }
+  })
+
+  observeEvent(input$upload_different6, {
+    rv$data_from_tab5 <- NULL
+    rv$tab6_manual_upload <- TRUE
+  })
+
   analysed.data <- reactive({
+    if (!is.null(rv$data_from_tab5) && is.null(input$file6)) {
+      return(rv$data_from_tab5)
+    }
     req(input$file6)
-    readRDS(input$file6$datapath)})
+    readRDS(input$file6$datapath)
+  })
 
 
 
@@ -839,7 +980,7 @@ app_server <- function(input, output, session) {
                        color = as.factor(eval(as.name(input$in.select0)))), size = 5) +
         ggtitle("Average scanning speed") +
         xlab("Protein") +
-        ylab("Scanning speed (nm/ms)") +
+        ylab(expression(Scanning~speed(mu*m/s))) +
         scale_color_discrete(name = "Experimental condition")
     })
 
@@ -869,7 +1010,7 @@ app_server <- function(input, output, session) {
                        bins = 30) +
         facet_wrap(~protein, scales = "free") +
         ggtitle("Distribution of average scanning speed of trajectories") +
-        xlab("Scanning speed (nm/ms)") +
+        xlab(expression(Scanning~speed(mu*m/s))) +
         ylab("Counts (trajectories)") +
         scale_fill_discrete(name = "Experimental condition")
     })
@@ -893,13 +1034,15 @@ app_server <- function(input, output, session) {
                                  detected.data == "Noise-excluded data") %>%
         group_by(trajectory.unique.id) %>%
         mutate(displacement.per.ms = (lead(r.X, n = 1) - r.X)/frame.interval) %>%
+        select(protein, trajectory.unique.id, all_of(input$in.select0),
+               displacement.per.ms) %>%
         ggplot() +
         geom_histogram(aes(x = displacement.per.ms,
                            fill = as.factor(eval(as.name(input$in.select0)))),
                        bins = 30, na.rm = TRUE) +
         facet_wrap(~protein, scales = "free") +
         ggtitle("Distribution of instantaneous scanning speed") +
-        xlab("Scanning speed (nm/ms)") +
+        xlab(expression(Scanning~speed(mu*m/s))) +
         ylab("Counts (frames)") +
         scale_fill_discrete(name = "Experimental condition")
 
@@ -1000,11 +1143,11 @@ app_server <- function(input, output, session) {
         group_by(protein, across(all_of(input$in.select2))) %>%
         summarise(ave.scanning.coverage = mean(scanning.coverage)) %>%
         ggplot() +
-        geom_point(aes(x = protein, y = ave.scanning.coverage,
+        geom_point(aes(x = protein, y = ave.scanning.coverage/1000,
                        color = as.factor(eval(as.name(input$in.select2)))), size = 5) +
         ggtitle("Average scanning coverage") +
         xlab("Protein") +
-        ylab("Scanning coverage (nm)") +
+        ylab(expression(Scanning~coverage~(mu*m))) +
         scale_color_discrete(name = "Experimental condition")
     })
 
@@ -1028,12 +1171,12 @@ app_server <- function(input, output, session) {
         group_by(protein, trajectory.unique.id, across(all_of(input$in.select2))) %>%
         summarise(scanning.coverage = mean((max(r.X) - min(r.X))/0.34)) %>%
         ggplot() +
-        geom_histogram(aes(x = scanning.coverage,
+        geom_histogram(aes(x = scanning.coverage/1000,
                            fill = as.factor(eval(as.name(input$in.select2)))),
                        bins = 30) +
         facet_wrap(~protein, scales = "free") +
         ggtitle("Distribution of scanning coverage") +
-        xlab("Scanning  coverage (nm)") +
+        xlab(expression(Scanning~coverage~(mu*m))) +
         ylab("Counts (trajectories)") +
         scale_fill_discrete(name = "Experimental condition")
     })
@@ -1063,11 +1206,11 @@ app_server <- function(input, output, session) {
         group_by(protein, across(all_of(input$in.select3))) %>%
         summarise(ave.bases.checked = mean(bases.checked)) %>%
         ggplot() +
-        geom_point(aes(x = protein , y = ave.bases.checked,
+        geom_point(aes(x = protein , y = ave.bases.checked/1000,
                        color = as.factor(eval(as.name(input$in.select3)))), size = 5) +
         ggtitle("Average accumulative scanning length") +
         xlab("Protein") +
-        ylab("Accumulative scanning length (nm)") +
+        ylab(expression(Accumulative~scanning~length~(mu*m))) +
         scale_color_discrete(name = "Experimental condition")
     })
 
@@ -1091,12 +1234,12 @@ app_server <- function(input, output, session) {
         group_by(protein, trajectory.unique.id, across(all_of(input$in.select3))) %>%
         summarise(bases.checked = max(cumsum(abs(step)), na.rm = T)/0.34) %>%
         ggplot() +
-        geom_histogram(aes(x = bases.checked,
+        geom_histogram(aes(x = bases.checked/1000,
                            fill = as.factor(eval(as.name(input$in.select3)))),
                        bins = 30) +
         facet_wrap(~protein, scales = "free") +
         ggtitle("Distribution of accumulative scanning length") +
-        xlab("accumulative scanning length (nm)") +
+        xlab(expression(Accumulative~scanning~length~(mu*m))) +
         ylab("Counts (trajectories)") +
         scale_fill_discrete(name = "Experimental condition")
     })
@@ -1140,7 +1283,7 @@ app_server <- function(input, output, session) {
                        shape = as.factor(eval(as.name(input$in.select4)))), size = 5) +
         ggtitle("Average redundancy-efficiency") +
         ylab("Redundancy") +
-        xlab("Efficiency (nm/ms)") +
+        xlab(expression(Efficiency~(mu*m/s))) +
         scale_color_discrete(name = "Protein") +
         scale_shape_discrete(name = "Experimental condition")
 
@@ -1170,14 +1313,17 @@ app_server <- function(input, output, session) {
                covered.length = max(r.X) - min(r.X),
                walking.speed = mean(abs(speed), na.rm = T),
                covering.speed = (max(r.X) - min(r.X))/duration,
-               redundancy = walked.length/covered.length) %>%
+               redundancy = walked.length/covered.length) %>% ungroup() %>%
+      group_by(protein, trajectory.unique.id, across(all_of(input$in.select4))) %>%
+        summarise(ave.redundancy = mean(redundancy, na.rm = T),
+                  ave.efficiency = mean(covering.speed, na.rm = T)) %>%
         ggplot() +
-        geom_point(aes(x = covering.speed,
-                       y = redundancy,
+        geom_point(aes(x = ave.efficiency,
+                       y = ave.redundancy,
                        color = as.factor(eval(as.name(input$in.select4)))), size = 0.1) +
         ggtitle("Distribution of redundancy-efficiency for trajectories") +
         ylab("Redundancy") +
-        xlab("Efficiency (nm/ms)") +
+        xlab(expression(Efficiency~(mu*m/s))) +
         scale_color_discrete(name = "Experimental condition")
 
     })
@@ -1206,13 +1352,17 @@ app_server <- function(input, output, session) {
                walking.speed = mean(abs(speed), na.rm = T),
                covering.speed = (max(r.X) - min(r.X))/duration,
                redundancy = walked.length/covered.length) %>%
+        ungroup() %>%
+        group_by(protein, trajectory.unique.id) %>%
+        summarise(ave.redundancy = mean(redundancy, na.rm = T),
+                  ave.efficiency = mean(covering.speed, na.rm = T)) %>%
         ggplot() +
-        geom_point(aes(x = covering.speed,
-                       y = redundancy,
+        geom_point(aes(x = ave.efficiency,
+                       y = ave.redundancy,
                        color = protein), size = 0.1) +
         ggtitle("Distribution of redundancy-efficiency for trajectories") +
         ylab("Redundancy") +
-        xlab("Efficiency (nm/ms)") +
+        xlab(expression(Efficiency~(mu*m/s))) +
         scale_color_discrete(name = "Protein")
 
     })
@@ -1280,6 +1430,8 @@ app_server <- function(input, output, session) {
                local.msd.10 = localMSDcomplete(r.X, 10) / (2000*frame.interval),
                local.msd.15 = localMSDcomplete(r.X, 15) / (2000*frame.interval)) %>%
         filter(local.msd.05 != 0) %>%
+        select(protein, trajectory.unique.id, all_of(input$in.select5),
+               local.msd.05) %>%
         group_by(protein, across(all_of(input$in.select5))) %>%
         ggplot(aes(x = local.msd.05)) +
         facet_wrap(~protein, ncol = 3) +
@@ -1323,6 +1475,8 @@ app_server <- function(input, output, session) {
                local.msd.10 = localMSDcomplete(r.X, 10) / (2000*frame.interval),
                local.msd.15 = localMSDcomplete(r.X, 15) / (2000*frame.interval)) %>%
         filter(local.msd.05 != 0) %>%
+        select(protein, trajectory.unique.id, all_of(input$in.select5),
+               local.msd.05) %>%
         group_by(protein, across(all_of(input$in.select5))) %>%
         ggplot(aes(x = local.msd.05, color = protein)) +
         geom_density(size = 3) +
