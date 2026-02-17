@@ -415,7 +415,7 @@ app_ui <- function(request) {
                         br(),
                         br(),
                         wellPanel(
-                          h5(strong("Binding Lifetime")),
+                          h5(strong("Trajectory Duration ")),
                           actionButton(inputId = "show61", label = "Display Results"),
                           br(),
                           br(),

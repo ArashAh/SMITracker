@@ -994,7 +994,7 @@ app_server <- function(input, output, session) {
                        bins = 30) +
         facet_wrap(~protein, scales = "free") +
         ggtitle("Distribution of average scanning speed of trajectories") +
-        xlab(expression(Scanning~speed(mu*m/s))) +
+        xlab(expression(Scanning~velocity(mu*m/s))) +
         ylab("Counts (trajectories)") +
         scale_fill_discrete(name = "Experimental condition")
     })
@@ -1025,8 +1025,8 @@ app_server <- function(input, output, session) {
                            fill = as.factor(eval(as.name(input$in.select0)))),
                        bins = 30, na.rm = TRUE) +
         facet_wrap(~protein, scales = "free") +
-        ggtitle("Distribution of instantaneous scanning speed") +
-        xlab(expression(Scanning~speed(mu*m/s))) +
+        ggtitle("Distribution of instantaneous scanning velocity") +
+        xlab(expression(Scanning~velocity(mu*m/s))) +
         ylab("Counts (frames)") +
         scale_fill_discrete(name = "Experimental condition")
 
@@ -1061,9 +1061,9 @@ app_server <- function(input, output, session) {
         ggplot() +
         geom_point(aes(x = protein,  y = ave.binding.lifetime,
                        color = as.factor(eval(as.name(input$in.select1)))), size = 5) +
-        ggtitle("Average binding life time") +
+        ggtitle("Average trajectory duration ") +
         xlab("Protein") +
-        ylab("Binding lifetime (s)") +
+        ylab("Trajectory duration (s)") +
         scale_color_discrete(name = "Experimental condition")
 
     })
@@ -1093,8 +1093,8 @@ app_server <- function(input, output, session) {
                            fill = as.factor(eval(as.name(input$in.select1)))),
                        bins = 30) +
         facet_wrap(~protein, scales = "free") +
-        ggtitle("Distribution of binding life time of trajectories") +
-        xlab("Binding life time (s)") +
+        ggtitle("Distribution of trajectory duration") +
+        xlab("Trajectory duration (s)") +
         ylab("Counts (trajectories)") +
         scale_fill_discrete(name = "Experimental condition")
     })

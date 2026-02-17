@@ -31,10 +31,15 @@ Open an R console and run the following commands:
 
 
     ``` r
-    SMITracker::run_app()
+    SMITracker::run_app(options = list(port = 80))
     
     ```
+4. **The interface can be accessed inside the browser at**:
 
+    ```link
+    127.0.0.1:80 or localhost 
+    ```
+    
 ### Build and run SMITracker inside a container (for Docker users)
 
 Make sure you have Git and Docker installed on your machine. Open a terminal, 
@@ -65,7 +70,7 @@ navigate to a directory to clone this repository and run the following commands:
     docker run -p 80:80 smitracker:latest
     ```
 
-5. **Open the interface inside a browser and analyze the data**
+5. **The interface can be accessed inside the browser at**:
 
     ```link
     127.0.0.1:80 or localhost 

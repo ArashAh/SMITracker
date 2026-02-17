@@ -1,6 +1,6 @@
 Package: SMITracker
 Title: Single-molecule Interaction Tracker
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: 
     person("Arash", "Ahmadi", , "arash.ahmadi@dscience.uio.no", role = c("cre", "aut"))
 Description: This package is an interactive analysis platform that enables
