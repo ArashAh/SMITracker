@@ -24,9 +24,10 @@ Open an R console and run the following commands:
 2. **Install SMITracker from GitHub:** 
 
       ``` r
-      devtools::install_github("ArashAh/SMITracker")
-      
+      devtools::install_github("ArashAh/SMITracker@v1.0.0", upgrade = "never")
+ 
       ```
+
 3. **Initiate the interface and analyze the data:**
 
 
@@ -61,13 +62,13 @@ navigate to a directory to clone this repository and run the following commands:
 3. **Build the Docker image of the platform**:
 
     ```sh
-    docker build -f Dockerfile --progress=plain -t smitracker:latest .
+    docker build -f Dockerfile --progress=plain -t smitracker:1.0.0 .
     ```
 
 4. **Run the Docker container**:
 
     ```sh
-    docker run -p 80:80 smitracker:latest
+    docker run -p 80:3838 smitracker:1.0.0
     ```
 
 5. **The interface can be accessed inside the browser at**:
