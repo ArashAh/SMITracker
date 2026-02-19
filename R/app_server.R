@@ -1169,7 +1169,7 @@ app_server <- function(input, output, session) {
         group_by(trajectory.unique.id) %>%
         mutate(step = lead(r.X, n = 1) - r.X) %>%
         group_by(protein, trajectory.unique.id, across(all_of(input$in.select2))) %>%
-        summarise(scanning.coverage = mean((max(r.X) - min(r.X))/0.34)) %>%
+        summarise(scanning.coverage = mean((max(r.X) - min(r.X)))) %>%
         ggplot() +
         geom_histogram(aes(x = scanning.coverage/1000,
                            fill = as.factor(eval(as.name(input$in.select2)))),
@@ -1232,7 +1232,7 @@ app_server <- function(input, output, session) {
         group_by(trajectory.unique.id) %>%
         mutate(step = lead(r.X, n = 1) - r.X) %>%
         group_by(protein, trajectory.unique.id, across(all_of(input$in.select3))) %>%
-        summarise(bases.checked = max(cumsum(abs(step)), na.rm = T)/0.34) %>%
+        summarise(bases.checked = max(cumsum(abs(step)), na.rm = T)) %>%
         ggplot() +
         geom_histogram(aes(x = bases.checked/1000,
                            fill = as.factor(eval(as.name(input$in.select3)))),
